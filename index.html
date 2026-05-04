@@ -69,6 +69,8 @@
     .btn-hdr-export:hover { background: var(--fill-focus); }
     .btn-hdr-import { color: var(--accent); }
     .btn-hdr-import:hover { background: var(--fill-focus); }
+    .btn-hdr-collapse { color: var(--label2); }
+    .btn-hdr-collapse:hover { background: var(--fill); }
     .btn-hdr-reset  { color: var(--label2); }
     .btn-hdr-reset:hover { color: var(--red); background: rgba(255,59,48,0.07); }
 
@@ -481,6 +483,7 @@
 
 <header>
   <h1>Envelope Budget</h1>
+  <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse All</button>
   <button class="btn-hdr btn-hdr-export" id="btnExport">↑ Export</button>
   <button class="btn-hdr btn-hdr-import" id="btnImport">↓ Import</button>
   <input type="file" id="fileImport" accept=".json" style="display:none">
@@ -564,15 +567,9 @@
   function makeDefaults() {
     return {
       bankBalance: 0,
-      nextId: 6,
-      nextTxId: 20,
-      envelopes: [
-        { id:1, name:'Rent',       monthly:1200, dueDay:1,  frequency:'monthly', source:'', transactions:[] },
-        { id:2, name:'Groceries',  monthly:400,  dueDay:15, frequency:'monthly', source:'', transactions:[] },
-        { id:3, name:'Utilities',  monthly:150,  dueDay:20, frequency:'monthly', source:'', transactions:[] },
-        { id:4, name:'Gas',        monthly:100,  dueDay:15, frequency:'monthly', source:'', transactions:[] },
-        { id:5, name:'Fun Money',  monthly:200,  dueDay:1,  frequency:'monthly', source:'', transactions:[] },
-      ],
+      nextId: 1,
+      nextTxId: 1,
+      envelopes: [],
     };
   }
 
@@ -905,6 +902,12 @@
         setTimeout(() => nameField.focus(), 120);
       }
     }
+  });
+
+  // ── Collapse All ──────────────────────────────────────────────────────────
+  document.getElementById('btnCollapseAll').addEventListener('click', () => {
+    expandedIds.clear();
+    renderEnvelopes();
   });
 
   // ── Export ────────────────────────────────────────────────────────────────
