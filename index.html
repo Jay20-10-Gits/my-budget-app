@@ -264,6 +264,27 @@
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
+    /* ─── Fill All Button ────────────────────────────── */
+    .btn-fill-all {
+      background: var(--surface);
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--r);
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.14s, opacity 0.14s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-fill-all:hover  { background: var(--fill-focus); }
+    .btn-fill-all:active { opacity: 0.75; }
+
     /* ─── Add Button ─────────────────────────────────── */
     .btn-add {
       background: var(--accent);
@@ -334,10 +355,17 @@
   <div class="section-label">Envelopes</div>
   <div class="envelopes-list" id="envelopesList"></div>
 
+  <!-- ── Fill All ── -->
+  <button class="btn-fill-all" id="btnFillAll">
+    Fill All Balances → Weekly Amount
+  </button>
+
   <!-- ── Add ── -->
   <button class="btn-add" id="btnAdd">
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
+
+  <p style="text-align:center; font-size:12px; color:var(--label2); margin-top:8px;">Made by Justin · v1.1</p>
 
 </main>
 
@@ -541,6 +569,16 @@
     if (!btn) return;
     const id = parseInt(btn.dataset.id);
     state.envelopes = state.envelopes.filter(x => x.id !== id);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // Fill ALL balances — add one week's amount to whatever is already there
+  document.getElementById('btnFillAll').addEventListener('click', () => {
+    state.envelopes.forEach(env => {
+      env.balance = env.balance + env.monthly / 4;
+    });
     renderEnvelopes();
     updateSummary();
     save();
