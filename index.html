@@ -184,14 +184,11 @@
       overflow: hidden;
     }
 
-    .env-card-inner {
-      padding: 14px 16px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 11px;
+    /* Top row wrapper — always visible */
+    .env-top-wrap {
+      padding: 13px 16px;
     }
 
-    /* Name row */
     .env-top {
       display: flex;
       align-items: center;
@@ -209,6 +206,46 @@
       outline: none;
     }
     .env-name::placeholder { color: #c7c7cc; }
+
+    /* Balance + chevron toggle */
+    .btn-toggle-card {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 7px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s;
+    }
+    .btn-toggle-card:hover { background: var(--fill); }
+
+    .env-bal-pill {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .card-chevron {
+      font-size: 13px;
+      color: var(--label2);
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .env-card.card-open .card-chevron { transform: rotate(90deg); }
+
+    /* Expandable body — fields + frequency/source */
+    .env-body {
+      padding: 0 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      border-top: 1px solid var(--sep);
+      padding-top: 13px;
+    }
 
     .btn-del {
       width: 26px;
@@ -548,7 +585,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.4</p>
+  <p class="footer-note">Made by Justin · v1.5</p>
 
 </main>
 
@@ -613,7 +650,8 @@
 
   // ── State ─────────────────────────────────────────────────────────────────
   let state = loadState();
-  let expandedIds = new Set();
+  let expandedCardIds = new Set();   // cards with details visible
+  let expandedTxIds   = new Set();   // cards with transaction panel open
 
   function loadState() {
     try {
@@ -662,91 +700,103 @@
     listEl.innerHTML = '';
 
     state.envelopes.forEach(env => {
-      const bal     = computeBalance(env);
-      const isOpen  = expandedIds.has(env.id);
-      const txCount = env.transactions.length;
+      const bal        = computeBalance(env);
+      const isCardOpen = expandedCardIds.has(env.id);
+      const isTxOpen   = expandedTxIds.has(env.id);
+      const txCount    = env.transactions.length;
 
       const card = document.createElement('div');
-      card.className = 'env-card' + (isOpen ? ' tx-open' : '');
+      card.className = 'env-card' + (isCardOpen ? ' card-open' : '') + (isTxOpen ? ' tx-open' : '');
       card.dataset.id = env.id;
 
-      // ── Transactions HTML ──
-      const txRows = env.transactions.length === 0
-        ? `<div class="tx-empty">No transactions yet.</div>`
-        : [...env.transactions].reverse().map(t => {
-            const cls = t.amount >= 0 ? 'pos' : 'neg';
-            const sign = t.amount >= 0 ? '+' : '';
-            return `
-              <div class="tx-item">
-                <span class="tx-date">${fmtDate(t.date)}</span>
-                <span class="tx-note">${esc(t.note || '—')}</span>
-                <span class="tx-amount ${cls}">${sign}${fmt(t.amount)}</span>
-                <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${t.id}" aria-label="Delete transaction">×</button>
-              </div>`;
-          }).join('');
+      // Build expandable body only when card is open
+      let bodyHTML = '';
+      if (isCardOpen) {
+        const txRows = txCount === 0
+          ? `<div class="tx-empty">No transactions yet.</div>`
+          : [...env.transactions].reverse().map(t => {
+              const cls  = t.amount >= 0 ? 'pos' : 'neg';
+              const sign = t.amount >= 0 ? '+' : '';
+              return `
+                <div class="tx-item">
+                  <span class="tx-date">${fmtDate(t.date)}</span>
+                  <span class="tx-note">${esc(t.note || '—')}</span>
+                  <span class="tx-amount ${cls}">${sign}${fmt(t.amount)}</span>
+                  <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${t.id}" aria-label="Delete">×</button>
+                </div>`;
+            }).join('');
+
+        bodyHTML = `
+          <div class="env-body">
+            <div class="env-fields">
+              <div class="env-field">
+                <label>Budget</label>
+                <input type="text" inputmode="decimal"
+                  value="${fmtDisplay(env.monthly)}"
+                  data-field="monthly" data-id="${env.id}" data-raw="${env.monthly}">
+              </div>
+              <div class="env-field">
+                <label>Due Date</label>
+                <input type="number" inputmode="numeric" min="1" max="31"
+                  value="${env.dueDay}" data-field="dueDay" data-id="${env.id}">
+              </div>
+              <div class="env-field">
+                <label>Balance</label>
+                <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1">
+              </div>
+            </div>
+            <div class="env-fields-2">
+              <div class="env-field">
+                <label>Frequency</label>
+                <select data-field="frequency" data-id="${env.id}">
+                  <option value="weekly"   ${env.frequency==='weekly'   ?'selected':''}>Weekly</option>
+                  <option value="biweekly" ${env.frequency==='biweekly' ?'selected':''}>Bi-Weekly</option>
+                  <option value="monthly"  ${env.frequency==='monthly'  ?'selected':''}>Monthly</option>
+                  <option value="yearly"   ${env.frequency==='yearly'   ?'selected':''}>Yearly</option>
+                </select>
+              </div>
+              <div class="env-field">
+                <label>Payment Source</label>
+                <input type="text" placeholder="e.g. Checking"
+                  value="${esc(env.source)}" data-field="source" data-id="${env.id}">
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-tx-toggle" data-id="${env.id}">
+            Transactions${txCount > 0 ? ` (${txCount})` : ''}
+            <span class="tx-chevron">›</span>
+          </button>
+
+          <div class="tx-panel">
+            <div class="tx-list">${txRows}</div>
+            <div class="tx-form">
+              <div class="tx-form-row">
+                <input type="date" class="tx-date-input" data-id="${env.id}" value="${today()}">
+                <input type="text" class="tx-amt-input" data-id="${env.id}"
+                  placeholder="Amount (+300 or -50)">
+              </div>
+              <input type="text" class="tx-note-input" data-id="${env.id}"
+                placeholder="Note (optional)">
+              <button class="btn-add-tx" data-id="${env.id}">Add Transaction</button>
+            </div>
+          </div>
+        `;
+      }
 
       card.innerHTML = `
-        <div class="env-card-inner">
+        <div class="env-top-wrap">
           <div class="env-top">
             <input class="env-name" type="text" placeholder="Envelope name"
               value="${esc(env.name)}" data-field="name" data-id="${env.id}">
+            <button class="btn-toggle-card" data-id="${env.id}" aria-label="Toggle details">
+              <span class="env-bal-pill">${fmt(bal)}</span>
+              <span class="card-chevron">›</span>
+            </button>
             <button class="btn-del" data-id="${env.id}" aria-label="Delete">×</button>
           </div>
-
-          <div class="env-fields">
-            <div class="env-field">
-              <label>Budget</label>
-              <input type="text" inputmode="decimal"
-                value="${fmtDisplay(env.monthly)}"
-                data-field="monthly" data-id="${env.id}" data-raw="${env.monthly}">
-            </div>
-            <div class="env-field">
-              <label>Due Date</label>
-              <input type="number" inputmode="numeric" min="1" max="31"
-                value="${env.dueDay}" data-field="dueDay" data-id="${env.id}">
-            </div>
-            <div class="env-field">
-              <label>Balance</label>
-              <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1">
-            </div>
-          </div>
-
-          <div class="env-fields-2">
-            <div class="env-field">
-              <label>Frequency</label>
-              <select data-field="frequency" data-id="${env.id}">
-                <option value="weekly"     ${env.frequency==='weekly'     ?'selected':''}>Weekly</option>
-                <option value="biweekly"   ${env.frequency==='biweekly'   ?'selected':''}>Bi-Weekly</option>
-                <option value="monthly"    ${env.frequency==='monthly'    ?'selected':''}>Monthly</option>
-                <option value="yearly"     ${env.frequency==='yearly'     ?'selected':''}>Yearly</option>
-              </select>
-            </div>
-            <div class="env-field">
-              <label>Payment Source</label>
-              <input type="text" placeholder="e.g. Checking"
-                value="${esc(env.source)}" data-field="source" data-id="${env.id}">
-            </div>
-          </div>
         </div>
-
-        <button class="btn-tx-toggle" data-id="${env.id}">
-          Transactions${txCount > 0 ? ` (${txCount})` : ''}
-          <span class="tx-chevron">›</span>
-        </button>
-
-        <div class="tx-panel">
-          <div class="tx-list">${txRows}</div>
-          <div class="tx-form">
-            <div class="tx-form-row">
-              <input type="date" class="tx-date-input" data-id="${env.id}" value="${today()}">
-              <input type="text" class="tx-amt-input" data-id="${env.id}"
-                placeholder="Amount (+300 or -50)">
-            </div>
-            <input type="text" class="tx-note-input" data-id="${env.id}"
-              placeholder="Note (optional)">
-            <button class="btn-add-tx" data-id="${env.id}">Add Transaction</button>
-          </div>
-        </div>
+        ${bodyHTML}
       `;
 
       listEl.appendChild(card);
@@ -817,6 +867,20 @@
     }
   });
 
+  // Toggle card details
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-toggle-card');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    if (expandedCardIds.has(id)) {
+      expandedCardIds.delete(id);
+      expandedTxIds.delete(id);   // also close transactions
+    } else {
+      expandedCardIds.add(id);
+    }
+    renderEnvelopes();
+  });
+
   // Delete envelope
   listEl.addEventListener('click', e => {
     const btn = e.target.closest('.btn-del');
@@ -825,7 +889,8 @@
     const env = state.envelopes.find(x => x.id === id);
     if (!confirm(`Delete "${env?.name || 'this envelope'}"? This cannot be undone.`)) return;
     state.envelopes = state.envelopes.filter(x => x.id !== id);
-    expandedIds.delete(id);
+    expandedCardIds.delete(id);
+    expandedTxIds.delete(id);
     renderEnvelopes();
     updateSummary();
     save();
@@ -836,8 +901,8 @@
     const btn = e.target.closest('.btn-tx-toggle');
     if (!btn) return;
     const id = parseInt(btn.dataset.id);
-    if (expandedIds.has(id)) expandedIds.delete(id);
-    else expandedIds.add(id);
+    if (expandedTxIds.has(id)) expandedTxIds.delete(id);
+    else expandedTxIds.add(id);
     renderEnvelopes();
   });
 
@@ -932,6 +997,7 @@
       transactions: [],
     };
     state.envelopes.push(newEnv);
+    expandedCardIds.add(newEnv.id);   // open new card automatically
     renderEnvelopes();
     updateSummary();
     save();
@@ -949,7 +1015,8 @@
 
   // ── Collapse All ──────────────────────────────────────────────────────────
   document.getElementById('btnCollapseAll').addEventListener('click', () => {
-    expandedIds.clear();
+    expandedCardIds.clear();
+    expandedTxIds.clear();
     renderEnvelopes();
   });
 
