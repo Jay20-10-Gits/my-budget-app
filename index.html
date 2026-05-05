@@ -283,7 +283,8 @@
     .env-field select:focus { background: var(--fill-focus); }
     .env-field input[type="number"] { text-align: center; }
     .env-field input[readonly] {
-      color: var(--label2);
+      color: var(--green);
+      font-weight: 600;
       cursor: default;
     }
 
@@ -345,12 +346,31 @@
 
     .tx-item {
       display: grid;
-      grid-template-columns: 90px 1fr auto;
+      grid-template-columns: 90px 1fr auto auto;
       gap: 8px;
       padding: 10px 16px;
       border-bottom: 1px solid var(--sep);
       align-items: center;
     }
+
+    .btn-del-tx {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(255,59,48,0.10);
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      line-height: 1;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-del-tx:hover { background: rgba(255,59,48,0.2); }
 
     .tx-date {
       font-size: 12px;
@@ -520,7 +540,7 @@
 
   <!-- ── Fill All ── -->
   <button class="btn-fill-all" id="btnFillAll">
-    Fill All Balances → Weekly Amount
+    Fill All Envelopes → Weekly Amount
   </button>
 
   <!-- ── Add ── -->
@@ -528,7 +548,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.2</p>
+  <p class="footer-note">Made by Justin · v1.4</p>
 
 </main>
 
@@ -552,7 +572,11 @@
     return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
   function today() {
-    return new Date().toISOString().split('T')[0];
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
   function fmtDate(d) {
     if (!d) return '';
@@ -657,6 +681,7 @@
                 <span class="tx-date">${fmtDate(t.date)}</span>
                 <span class="tx-note">${esc(t.note || '—')}</span>
                 <span class="tx-amount ${cls}">${sign}${fmt(t.amount)}</span>
+                <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${t.id}" aria-label="Delete transaction">×</button>
               </div>`;
           }).join('');
 
@@ -714,7 +739,7 @@
           <div class="tx-form">
             <div class="tx-form-row">
               <input type="date" class="tx-date-input" data-id="${env.id}" value="${today()}">
-              <input type="text" inputmode="decimal" class="tx-amt-input" data-id="${env.id}"
+              <input type="text" class="tx-amt-input" data-id="${env.id}"
                 placeholder="Amount (+300 or -50)">
             </div>
             <input type="text" class="tx-note-input" data-id="${env.id}"
@@ -796,7 +821,9 @@
   listEl.addEventListener('click', e => {
     const btn = e.target.closest('.btn-del');
     if (!btn) return;
-    const id = parseInt(btn.dataset.id);
+    const id  = parseInt(btn.dataset.id);
+    const env = state.envelopes.find(x => x.id === id);
+    if (!confirm(`Delete "${env?.name || 'this envelope'}"? This cannot be undone.`)) return;
     state.envelopes = state.envelopes.filter(x => x.id !== id);
     expandedIds.delete(id);
     renderEnvelopes();
@@ -812,6 +839,21 @@
     if (expandedIds.has(id)) expandedIds.delete(id);
     else expandedIds.add(id);
     renderEnvelopes();
+  });
+
+  // Delete transaction
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-del-tx');
+    if (!btn) return;
+    const envId = parseInt(btn.dataset.envId);
+    const txId  = parseInt(btn.dataset.txId);
+    const env   = state.envelopes.find(x => x.id === envId);
+    if (!env) return;
+    if (!confirm('Delete this transaction? This cannot be undone.')) return;
+    env.transactions = env.transactions.filter(t => t.id !== txId);
+    renderEnvelopes();
+    updateSummary();
+    save();
   });
 
   // Add transaction
@@ -863,6 +905,7 @@
 
   // ── Fill All ──────────────────────────────────────────────────────────────
   document.getElementById('btnFillAll').addEventListener('click', () => {
+    if (!confirm('Add a weekly fill transaction to all envelopes?')) return;
     const d = today();
     state.envelopes.forEach(env => {
       env.transactions.push({
