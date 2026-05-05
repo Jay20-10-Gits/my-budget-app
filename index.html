@@ -585,7 +585,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.5</p>
+  <p class="footer-note">Made by Justin · v1.6</p>
 
 </main>
 
@@ -615,6 +615,14 @@
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
+  function daysAgo(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
   function fmtDate(d) {
     if (!d) return '';
     const [y, m, day] = d.split('-');
@@ -627,10 +635,38 @@
   // ── Defaults ─────────────────────────────────────────────────────────────
   function makeDefaults() {
     return {
-      bankBalance: 0,
-      nextId: 1,
-      nextTxId: 1,
-      envelopes: [],
+      bankBalance: 1035.50,
+      nextId: 4,
+      nextTxId: 10,
+      envelopes: [
+        {
+          id: 1, name: 'Rent', monthly: 1200, dueDay: 1,
+          frequency: 'monthly', source: 'Checking',
+          transactions: [
+            { id: 1, date: daysAgo(14), amount: 300,  note: 'Weekly fill' },
+            { id: 2, date: daysAgo(7),  amount: 300,  note: 'Weekly fill' },
+            { id: 3, date: today(),     amount: 300,  note: 'Weekly fill' },
+          ],
+        },
+        {
+          id: 2, name: 'Groceries', monthly: 400, dueDay: 15,
+          frequency: 'monthly', source: 'Checking',
+          transactions: [
+            { id: 4, date: daysAgo(14), amount: 100,   note: 'Weekly fill' },
+            { id: 5, date: daysAgo(10), amount: -87.32, note: 'Grocery run' },
+            { id: 6, date: daysAgo(3),  amount: 100,   note: 'Weekly fill' },
+          ],
+        },
+        {
+          id: 3, name: 'Gas', monthly: 150, dueDay: 15,
+          frequency: 'monthly', source: 'Checking',
+          transactions: [
+            { id: 7, date: daysAgo(14), amount: 37.50,  note: 'Weekly fill' },
+            { id: 8, date: daysAgo(8),  amount: -52.18, note: 'Fill up' },
+            { id: 9, date: today(),     amount: 37.50,  note: 'Weekly fill' },
+          ],
+        },
+      ],
     };
   }
 
@@ -1049,7 +1085,8 @@
           return;
         }
         state = migrateState(imported);
-        expandedIds.clear();
+        expandedCardIds.clear();
+        expandedTxIds.clear();
         bankInput.value = fmtDisplay(state.bankBalance);
         renderEnvelopes();
         updateSummary();
@@ -1066,7 +1103,8 @@
   document.getElementById('btnReset').addEventListener('click', () => {
     if (!confirm('Reset everything back to the example envelopes? This cannot be undone.')) return;
     state = makeDefaults();
-    expandedIds.clear();
+    expandedCardIds.clear();
+    expandedTxIds.clear();
     bankInput.value = fmtDisplay(state.bankBalance);
     renderEnvelopes();
     updateSummary();
