@@ -8,1770 +8,826 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #eef2ff;
-      --bg-alt: #f8fafc;
-      --surface: rgba(255, 255, 255, 0.92);
-      --surface-strong: #ffffff;
-      --surface-muted: #f3f6fb;
-      --line: rgba(15, 23, 42, 0.08);
-      --text: #14213d;
-      --text-soft: #5b6477;
-      --text-faint: #8d97a7;
-      --accent: #1d4ed8;
-      --accent-strong: #1e40af;
-      --accent-soft: rgba(29, 78, 216, 0.12);
-      --green: #0f9f6e;
-      --green-soft: rgba(15, 159, 110, 0.12);
-      --orange: #d97706;
-      --orange-soft: rgba(217, 119, 6, 0.14);
-      --red: #dc2626;
-      --red-soft: rgba(220, 38, 38, 0.12);
-      --shadow: 0 22px 48px rgba(59, 76, 120, 0.12);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
+      --bg:         #f2f2f7;
+      --surface:    #ffffff;
+      --accent:     #007aff;
+      --label:      #1c1c1e;
+      --label2:     #8e8e93;
+      --sep:        #e5e5ea;
+      --fill:       #f2f2f7;
+      --fill-focus: rgba(0, 122, 255, 0.09);
+      --green:      #34c759;
+      --orange:     #ff9f0a;
+      --red:        #ff3b30;
+      --r:          12px;
+      --r-sm:       8px;
     }
 
     body {
-      font-family: "Segoe UI", "Aptos", system-ui, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(96, 165, 250, 0.2), transparent 30%),
-        linear-gradient(180deg, #f0f7ff 0%, #f8fafc 50%, #eef3ff 100%);
-      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--label);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.25) 1px, transparent 1px);
-      background-size: 44px 44px;
-      opacity: 0.3;
-    }
-
+    /* ─── Header ─────────────────────────────────────── */
     header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--sep);
+      padding: calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 14px calc(16px + env(safe-area-inset-left));
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(18px);
-      background: rgba(248, 250, 252, 0.8);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.7);
-    }
-
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: calc(18px + env(safe-area-inset-top)) 20px 18px;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-    }
-
-    .brand-kicker {
-      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 9px;
-      font-size: 12px;
+      gap: 6px;
+    }
+
+    header h1 {
+      font-size: 19px;
       font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-strong);
-    }
-
-    .brand-kicker::before {
-      content: "";
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #60a5fa, #1d4ed8);
-      box-shadow: 0 0 0 6px rgba(29, 78, 216, 0.12);
-    }
-
-    h1 {
-      font-size: clamp(28px, 4vw, 38px);
-      line-height: 1;
-      letter-spacing: -0.05em;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      max-width: 560px;
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .header-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .btn-hdr,
-    .btn-primary,
-    .btn-secondary,
-    .nav-tab,
-    .btn-inline,
-    .btn-add,
-    .btn-add-tx,
-    .btn-fill-all {
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-      font-family: inherit;
+      letter-spacing: -0.4px;
+      flex: 1;
     }
 
     .btn-hdr {
-      padding: 11px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.82);
-      color: var(--text-soft);
-      box-shadow: inset 0 0 0 1px rgba(20, 33, 61, 0.08);
-    }
-
-    .btn-hdr:hover,
-    .btn-secondary:hover,
-    .nav-tab:hover,
-    .btn-inline:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(20, 33, 61, 0.08);
-    }
-
-    .btn-hdr-export,
-    .btn-hdr-import {
-      color: var(--accent-strong);
-    }
-
-    .btn-hdr-reset:hover {
-      color: var(--red);
-      background: rgba(255, 255, 255, 0.98);
-    }
-
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px 120px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
-      gap: 18px;
-      margin-bottom: 20px;
-    }
-
-    .hero-card,
-    .panel,
-    .env-card,
-    .report-card,
-    .stat-card,
-    .summary-card {
-      background: var(--surface);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .hero-card {
-      padding: 26px;
-      background:
-        linear-gradient(135deg, rgba(29, 78, 216, 0.97), rgba(56, 189, 248, 0.86)),
-        #1d4ed8;
-      color: #fff;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      right: -60px;
-      top: -70px;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .hero-top {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-      margin-bottom: 30px;
-    }
-
-    .hero-top h2 {
-      font-size: 26px;
-      letter-spacing: -0.04em;
-      margin-bottom: 10px;
-    }
-
-    .hero-top p {
-      max-width: 500px;
-      color: rgba(255, 255, 255, 0.84);
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .hero-chip {
-      padding: 10px 14px;
-      border-radius: 999px;
       font-size: 12px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.14);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 9px;
+      border-radius: 7px;
+      letter-spacing: 0.1px;
+      transition: background 0.14s, color 0.14s;
+      -webkit-tap-highlight-color: transparent;
       white-space: nowrap;
-      backdrop-filter: blur(8px);
     }
+    .btn-hdr-export { color: var(--accent); }
+    .btn-hdr-export:hover { background: var(--fill-focus); }
+    .btn-hdr-import { color: var(--accent); }
+    .btn-hdr-import:hover { background: var(--fill-focus); }
+    .btn-hdr-collapse { color: var(--label2); }
+    .btn-hdr-collapse:hover { background: var(--fill); }
+    .btn-hdr-reset  { color: var(--label2); }
+    .btn-hdr-reset:hover { color: var(--red); background: rgba(255,59,48,0.07); }
 
-    .hero-metrics {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .hero-metric {
-      padding: 16px 18px;
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-    }
-
-    .hero-metric-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.72);
-      margin-bottom: 10px;
-    }
-
-    .hero-metric-value {
-      font-size: clamp(24px, 4vw, 34px);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      margin-bottom: 8px;
-    }
-
-    .hero-metric-note {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.45;
-    }
-
-    .panel {
-      padding: 24px;
+    /* ─── Main ───────────────────────────────────────── */
+    main {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 20px 16px 88px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    .panel-heading {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 8px;
-    }
-
-    .panel h3,
-    .section-heading h2 {
-      font-size: 22px;
-      letter-spacing: -0.04em;
-    }
-
-    .panel-subcopy,
-    .section-heading p,
-    .card-subcopy {
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
+    /* ─── Summary Card ───────────────────────────────── */
     .summary-card {
-      padding: 20px;
-      display: grid;
-      gap: 16px;
-      margin-bottom: 20px;
+      background: var(--surface);
+      border-radius: var(--r);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
     }
 
-    .summary-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
+    .bank-section {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--sep);
     }
 
-    .bank-label {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
+    .micro-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--label2);
       text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 10px;
+      letter-spacing: 0.7px;
+      margin-bottom: 7px;
     }
 
     .bank-row {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      align-items: baseline;
+      gap: 3px;
     }
 
     .bank-prefix {
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--text-faint);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--label2);
+      line-height: 1;
+      user-select: none;
     }
 
     #bankBalance {
       flex: 1;
       min-width: 0;
-      border: none;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--label);
       background: transparent;
-      font-size: clamp(32px, 5vw, 46px);
-      font-weight: 800;
-      letter-spacing: -0.07em;
-      color: var(--text);
+      border: none;
       outline: none;
     }
-
-    #bankBalance::placeholder { color: #c5cedb; }
-
-    .summary-pill {
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      background: var(--surface-muted);
-      color: var(--text-soft);
-    }
-
-    .totals-grid,
-    .stat-grid,
-    .report-grid,
-    .planner-grid {
-      display: grid;
-      gap: 14px;
-    }
+    #bankBalance::placeholder { color: #d1d1d6; }
 
     .totals-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      display: grid;
+      grid-template-columns: 1fr 1fr;
     }
 
-    .stat-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      margin-bottom: 20px;
-    }
+    .total-cell { padding: 15px 20px; }
+    .total-cell + .total-cell { border-left: 1px solid var(--sep); }
 
-    .report-grid,
-    .planner-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .total-cell,
-    .stat-card,
-    .report-card {
-      background: var(--surface-strong);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      border: 1px solid var(--line);
-    }
-
-    .metric-label {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 10px;
-    }
-
-    .metric-value {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      margin-bottom: 8px;
-    }
-
-    .metric-note {
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--text-soft);
+    .total-value {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-top: 4px;
     }
 
     .status-bar {
-      padding: 15px 18px;
-      border-radius: var(--radius-lg);
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.5;
+      padding: 10px 20px;
+      border-top: 1px solid var(--sep);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .status-bar.reconciled { color: var(--green); }
+    .status-bar.surplus    { color: var(--orange); }
+    .status-bar.deficit    { color: var(--red); }
+
+    /* ─── Section Label ──────────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--label2);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 0 4px;
     }
 
-    .status-bar.reconciled {
-      background: var(--green-soft);
-      color: var(--green);
-    }
-
-    .status-bar.surplus {
-      background: var(--orange-soft);
-      color: var(--orange);
-    }
-
-    .status-bar.deficit {
-      background: var(--red-soft);
-      color: var(--red);
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .nav-tab {
-      padding: 12px 16px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--text-soft);
-      font-size: 14px;
-      font-weight: 800;
-      box-shadow: inset 0 0 0 1px rgba(20, 33, 61, 0.06);
-    }
-
-    .nav-tab.active {
-      background: linear-gradient(135deg, #1d4ed8, #38bdf8);
-      color: #fff;
-      box-shadow: 0 16px 30px rgba(29, 78, 216, 0.26);
-    }
-
-    .view {
-      display: none;
-      animation: rise 0.28s ease;
-    }
-
-    .view.active { display: block; }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .btn-primary,
-    .btn-add,
-    .btn-add-tx,
-    .btn-fill-all {
-      background: linear-gradient(135deg, #1d4ed8, #2563eb);
-      color: #fff;
-      border-radius: 16px;
-      font-weight: 800;
-      box-shadow: 0 16px 28px rgba(29, 78, 216, 0.24);
-    }
-
-    .btn-primary,
-    .btn-secondary,
-    .btn-inline {
-      padding: 12px 16px;
-      font-size: 14px;
-    }
-
-    .btn-secondary,
-    .btn-inline {
-      background: #fff;
-      color: var(--text-soft);
-      border-radius: 16px;
-      box-shadow: inset 0 0 0 1px rgba(20, 33, 61, 0.08);
-    }
-
-    .btn-primary:hover,
-    .btn-add:hover,
-    .btn-add-tx:hover,
-    .btn-fill-all:hover {
-      transform: translateY(-1px);
-      opacity: 0.94;
-    }
-
-    .stack {
-      display: grid;
-      gap: 14px;
-    }
-
-    .list-card,
-    .report-card,
-    .panel-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .timeline-item,
-    .upcoming-item,
-    .progress-row,
-    .source-row,
-    .plan-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: var(--radius-md);
-      background: var(--surface-muted);
-    }
-
-    .timeline-main,
-    .upcoming-main,
-    .progress-main {
-      min-width: 0;
-    }
-
-    .item-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .item-meta {
-      font-size: 12px;
-      color: var(--text-soft);
-      line-height: 1.45;
-    }
-
-    .item-value {
-      font-size: 15px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .item-value.pos { color: var(--green); }
-    .item-value.neg { color: var(--red); }
-    .item-value.warn { color: var(--orange); }
-
-    .empty-state {
-      padding: 18px;
-      text-align: center;
-      color: var(--text-soft);
-      font-size: 14px;
-      background: var(--surface-muted);
-      border-radius: var(--radius-md);
-    }
-
-    .progress-bar {
-      margin-top: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(20, 33, 61, 0.08);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(135deg, #1d4ed8, #38bdf8);
-    }
-
-    .progress-fill.warn {
-      background: linear-gradient(135deg, #f59e0b, #f97316);
-    }
-
-    .progress-fill.danger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
+    /* ─── Envelope List ──────────────────────────────── */
     .envelopes-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 8px;
     }
 
+    /* ─── Envelope Card ──────────────────────────────── */
     .env-card {
+      background: var(--surface);
+      border-radius: var(--r);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
       overflow: hidden;
     }
 
+    /* Top row wrapper — always visible */
     .env-top-wrap {
-      padding: 16px 18px;
+      padding: 13px 16px;
     }
 
     .env-top {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .env-name {
       flex: 1;
       min-width: 0;
       font-size: 16px;
-      font-weight: 800;
-      color: var(--text);
+      font-weight: 600;
+      color: var(--label);
       background: transparent;
       border: none;
       outline: none;
     }
+    .env-name::placeholder { color: #c7c7cc; }
 
-    .env-name::placeholder { color: #b1bbca; }
-
+    /* Balance + chevron toggle */
     .btn-toggle-card {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 999px;
+      gap: 4px;
+      background: none;
       border: none;
-      background: var(--surface-muted);
       cursor: pointer;
+      padding: 4px 7px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s;
     }
+    .btn-toggle-card:hover { background: var(--fill); }
 
     .env-bal-pill {
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 700;
       color: var(--green);
     }
-
     .env-bal-pill.negative { color: var(--red); }
 
-    .card-chevron,
-    .tx-chevron {
-      font-size: 14px;
-      color: var(--text-faint);
-      transition: transform 0.2s ease;
+    .card-chevron {
+      font-size: 13px;
+      color: var(--label2);
+      transition: transform 0.2s;
       display: inline-block;
     }
+    .env-card.card-open .card-chevron { transform: rotate(90deg); }
 
-    .env-card.card-open .card-chevron,
-    .env-card.tx-open .tx-chevron {
-      transform: rotate(90deg);
-    }
-
-    .btn-del,
-    .btn-del-tx {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(220, 38, 38, 0.08);
-      color: var(--red);
-      font-size: 18px;
-      line-height: 1;
-    }
-
+    /* Expandable body — fields + frequency/source */
     .env-body {
-      padding: 0 18px 18px;
+      padding: 0 16px 14px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      border-top: 1px solid var(--line);
+      gap: 11px;
+      border-top: 1px solid var(--sep);
+      padding-top: 13px;
     }
 
-    .env-fields,
-    .env-fields-2,
-    .tx-form-row {
-      display: grid;
-      gap: 10px;
+    .btn-del {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(255,59,48,0.10);
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      line-height: 1;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
+    .btn-del:hover { background: rgba(255,59,48,0.2); }
 
+    /* Fields row 1: Budget | Due Date | Balance */
     .env-fields {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      padding-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 8px;
     }
 
+    /* Fields row 2: Frequency | Source */
     .env-fields-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
     .env-field {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .env-field label {
       font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
+      font-weight: 600;
       text-transform: uppercase;
-      color: var(--text-faint);
+      letter-spacing: 0.5px;
+      color: var(--label2);
+      white-space: nowrap;
     }
 
     .env-field input,
-    .env-field select,
-    .tx-form input,
-    .tx-edit {
-      width: 100%;
-      border: 1px solid rgba(20, 33, 61, 0.08);
-      background: var(--surface-muted);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      outline: none;
-      appearance: none;
-      font-family: inherit;
-    }
-
-    .env-field input:focus,
-    .env-field select:focus,
-    .tx-form input:focus,
-    .tx-edit:focus {
-      border-color: rgba(29, 78, 216, 0.28);
-      background: rgba(255, 255, 255, 0.98);
-    }
-
-    .env-field input[readonly] {
-      cursor: default;
-      font-weight: 800;
-    }
-
     .env-field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238d97a7'/%3E%3C/svg%3E");
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--label);
+      background: var(--fill);
+      border: none;
+      outline: none;
+      border-radius: var(--r-sm);
+      padding: 8px 9px;
+      width: 100%;
+      transition: background 0.12s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .env-field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238e8e93'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 30px;
+      background-position: right 9px center;
+      padding-right: 26px;
+    }
+    .env-field input:focus,
+    .env-field select:focus { background: var(--fill-focus); }
+    .env-field input[type="number"] { text-align: center; }
+    .env-field input[readonly] {
+      color: var(--green);
+      font-weight: 600;
+      cursor: default;
     }
 
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
+    /* ─── Transaction Toggle ─────────────────────────── */
     .btn-tx-toggle {
       display: flex;
       align-items: center;
-      gap: 8px;
-      width: 100%;
+      gap: 6px;
+      background: none;
       border: none;
-      background: transparent;
-      border-top: 1px solid var(--line);
-      padding: 14px 18px;
-      text-align: left;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--text-soft);
+      border-top: 1px solid var(--sep);
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--label2);
       cursor: pointer;
+      text-align: left;
+      letter-spacing: 0.2px;
+      transition: background 0.12s, color 0.12s;
+      -webkit-tap-highlight-color: transparent;
     }
+    .btn-tx-toggle:hover { background: var(--fill); color: var(--accent); }
 
-    .tx-chevron { margin-left: auto; }
+    .tx-chevron {
+      margin-left: auto;
+      font-size: 14px;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .env-card.tx-open .tx-chevron { transform: rotate(90deg); }
 
+    /* ─── Transaction Panel ──────────────────────────── */
     .tx-panel {
       display: none;
       flex-direction: column;
-      background: rgba(243, 246, 251, 0.72);
-      border-top: 1px solid var(--line);
+      gap: 0;
+      border-top: 1px solid var(--sep);
+      background: var(--fill);
     }
-
     .env-card.tx-open .tx-panel { display: flex; }
 
+    /* Transaction list */
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+    }
+
     .tx-empty {
-      padding: 16px 18px;
-      color: var(--text-soft);
+      padding: 14px 16px;
       font-size: 13px;
+      color: var(--label2);
       font-style: italic;
     }
 
     .tx-item {
       display: grid;
-      grid-template-columns: 130px 1fr 120px auto;
-      gap: 10px;
+      grid-template-columns: 90px 1fr auto auto;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--sep);
       align-items: center;
-      padding: 12px 18px;
-      border-bottom: 1px solid rgba(20, 33, 61, 0.06);
     }
 
-    .tx-edit {
-      background: rgba(255, 255, 255, 0.8);
+    .btn-del-tx {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(255,59,48,0.10);
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      line-height: 1;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-del-tx:hover { background: rgba(255,59,48,0.2); }
+
+    .tx-date {
+      font-size: 12px;
+      color: var(--label2);
+      white-space: nowrap;
+    }
+
+    .tx-note {
       font-size: 13px;
-      font-weight: 700;
-      padding: 9px 10px;
+      color: var(--label);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .tx-edit-amt { text-align: right; }
-    .tx-edit-amt.pos { color: var(--green); }
-    .tx-edit-amt.neg { color: var(--red); }
+    .tx-amount {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tx-amount.pos { color: var(--green); }
+    .tx-amount.neg { color: var(--red); }
 
+    /* Editable transaction inputs */
+    .tx-edit {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      color: var(--label);
+      width: 100%;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background 0.12s;
+      font-family: inherit;
+    }
+    .tx-edit:focus { background: var(--fill-focus); }
+    .tx-edit-amt       { text-align: right; font-weight: 600; }
+    .tx-edit-amt.pos   { color: var(--green); }
+    .tx-edit-amt.neg   { color: var(--red); }
+
+    /* Add transaction form */
     .tx-form {
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 16px 18px 18px;
+      gap: 8px;
     }
 
     .tx-form-row {
-      grid-template-columns: 150px 1fr;
-    }
-
-    .btn-add-tx,
-    .btn-fill-all,
-    .btn-add {
-      padding: 13px 16px;
-      font-size: 14px;
-    }
-
-    .btn-fill-all,
-    .btn-add {
-      width: 100%;
-      justify-content: center;
-      display: inline-flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 130px 1fr;
       gap: 8px;
-      margin-bottom: 12px;
     }
 
-    .btn-add-icon {
-      font-size: 20px;
-      font-weight: 400;
-      line-height: 1;
+    .tx-form input {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--label);
+      background: var(--surface);
+      border: 1px solid var(--sep);
+      outline: none;
+      border-radius: var(--r-sm);
+      padding: 8px 10px;
+      width: 100%;
+      transition: border-color 0.12s;
     }
+    .tx-form input:focus { border-color: var(--accent); }
+    .tx-form input::placeholder { color: #c7c7cc; }
 
+    .btn-add-tx {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.14s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add-tx:hover  { opacity: 0.88; }
+    .btn-add-tx:active { opacity: 0.75; }
+
+    /* ─── Fill All Button ────────────────────────────── */
+    .btn-fill-all {
+      background: var(--surface);
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--r);
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.14s, opacity 0.14s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-fill-all:hover  { background: var(--fill-focus); }
+    .btn-fill-all:active { opacity: 0.75; }
+
+    /* ─── Add Envelope Button ────────────────────────── */
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.14s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add:hover  { opacity: 0.88; }
+    .btn-add:active { opacity: 0.78; transform: scale(0.99); }
+
+    .btn-add-icon { font-size: 22px; font-weight: 300; line-height: 1; }
+
+    /* ─── Footer ─────────────────────────────────────── */
     .footer-note {
       text-align: center;
-      margin-top: 20px;
-      color: var(--text-faint);
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      color: var(--label2);
+      margin-top: 4px;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--surface-muted);
-      color: var(--text-soft);
-    }
-
-    .badge.good {
-      background: var(--green-soft);
-      color: var(--green);
-    }
-
-    .badge.warn {
-      background: var(--orange-soft);
-      color: var(--orange);
-    }
-
-    .badge.danger {
-      background: var(--red-soft);
-      color: var(--red);
-    }
-
-    @media (max-width: 980px) {
-      .hero-grid,
-      .report-grid,
-      .planner-grid,
-      .stat-grid,
-      .totals-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .header-inner,
-      .hero-top,
-      .summary-top,
-      .section-heading {
-        flex-direction: column;
-      }
-
-      .header-actions {
-        justify-content: flex-start;
-      }
-    }
-
-    @media (max-width: 720px) {
-      main {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .hero-grid,
-      .report-grid,
-      .planner-grid,
-      .stat-grid,
-      .totals-grid,
-      .hero-metrics,
-      .env-fields,
-      .env-fields-2,
-      .tx-form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .tx-item {
-        grid-template-columns: 1fr;
-      }
-
-      .btn-del-tx {
-        justify-self: end;
-      }
-
-      .header-inner {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (min-width: 480px) {
+      .env-fields   { gap: 10px; }
+      .env-fields-2 { gap: 10px; }
+      .tx-form-row  { grid-template-columns: 150px 1fr; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-inner">
-    <div>
-      <div class="brand-kicker">Budget Command Center</div>
-      <h1>Envelope Budget</h1>
-      <p class="subtitle">Track the money you have, assign it with purpose, and flip between dashboard, envelopes, reports, and planning without leaving the page.</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse All</button>
-      <button class="btn-hdr btn-hdr-export" id="btnExport">Export</button>
-      <button class="btn-hdr btn-hdr-import" id="btnImport">Import</button>
-      <input type="file" id="fileImport" accept=".json" style="display:none">
-      <button class="btn-hdr btn-hdr-reset" id="btnReset">Reset</button>
-    </div>
-  </div>
+  <h1>Envelope Budget</h1>
+  <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse All</button>
+  <button class="btn-hdr btn-hdr-export" id="btnExport">↑ Export</button>
+  <button class="btn-hdr btn-hdr-import" id="btnImport">↓ Import</button>
+  <input type="file" id="fileImport" accept=".json" style="display:none">
+  <button class="btn-hdr btn-hdr-reset" id="btnReset">Reset</button>
 </header>
 
 <main>
-  <section class="hero-grid">
-    <div class="hero-card">
-      <div class="hero-top">
-        <div>
-          <div class="eyebrow" style="color: rgba(255,255,255,0.7);">This Month</div>
-          <h2 id="heroHeadline">Keep every dollar pointed somewhere useful.</h2>
-          <p id="heroCopy">Your budget is easiest to trust when it shows what is funded, what is waiting, and what needs attention next.</p>
-        </div>
-        <div class="hero-chip" id="heroChip">Balanced plan</div>
-      </div>
-      <div class="hero-metrics">
-        <div class="hero-metric">
-          <div class="hero-metric-label">Assigned</div>
-          <div class="hero-metric-value" id="heroAssigned">$0.00</div>
-          <div class="hero-metric-note" id="heroAssignedNote">Across all envelopes</div>
-        </div>
-        <div class="hero-metric">
-          <div class="hero-metric-label">Unassigned</div>
-          <div class="hero-metric-value" id="heroUnassigned">$0.00</div>
-          <div class="hero-metric-note" id="heroUnassignedNote">Available to direct</div>
-        </div>
-        <div class="hero-metric">
-          <div class="hero-metric-label">Upcoming Need</div>
-          <div class="hero-metric-value" id="heroNeeded">$0.00</div>
-          <div class="hero-metric-note" id="heroNeededNote">Due within the next 7 days</div>
-        </div>
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-heading">
-        <div>
-          <div class="eyebrow">Quick Focus</div>
-          <h3>What deserves attention right now</h3>
-        </div>
-        <div class="badge" id="focusBadge">Monitoring</div>
+  <!-- ── Summary ── -->
+  <div class="summary-card">
+    <div class="bank-section">
+      <div class="micro-label">Bank Account Balance</div>
+      <div class="bank-row">
+        <span class="bank-prefix">$</span>
+        <input type="text" id="bankBalance" inputmode="decimal" placeholder="0.00" autocomplete="off" spellcheck="false">
       </div>
-      <p class="panel-subcopy" id="focusText">Your dashboard will call out low-balance categories, upcoming due dates, and where extra cash can be assigned next.</p>
-      <div class="stack" id="focusList"></div>
-    </div>
-  </section>
-
-  <section class="summary-card">
-    <div class="summary-top">
-      <div style="flex:1; min-width:0;">
-        <div class="bank-label">Bank Account Balance</div>
-        <div class="bank-row">
-          <span class="bank-prefix">$</span>
-          <input type="text" id="bankBalance" inputmode="decimal" placeholder="0.00" autocomplete="off" spellcheck="false">
-        </div>
-      </div>
-      <div class="summary-pill" id="summaryPill">4 budget views in one place</div>
     </div>
     <div class="totals-grid">
       <div class="total-cell">
-        <div class="metric-label">Envelope Total</div>
-        <div class="metric-value" id="totalEnvelopes">$0.00</div>
-        <div class="metric-note">Current balances across all categories</div>
+        <div class="micro-label">Total Envelopes</div>
+        <div class="total-value" id="totalEnvelopes">$0.00</div>
       </div>
       <div class="total-cell">
-        <div class="metric-label">Difference</div>
-        <div class="metric-value" id="difference">$0.00</div>
-        <div class="metric-note" id="differenceNote">Bank balance vs assigned money</div>
-      </div>
-      <div class="total-cell">
-        <div class="metric-label">Monthly Targets</div>
-        <div class="metric-value" id="monthlyTarget">$0.00</div>
-        <div class="metric-note">Total planned budget each month</div>
-      </div>
-      <div class="total-cell">
-        <div class="metric-label">Transactions</div>
-        <div class="metric-value" id="transactionCount">0</div>
-        <div class="metric-note">All recorded funding and spending</div>
+        <div class="micro-label">Difference</div>
+        <div class="total-value" id="difference">$0.00</div>
       </div>
     </div>
-    <div class="status-bar reconciled" id="statusBar">Reconciled. All money is assigned.</div>
-  </section>
+    <div class="status-bar reconciled" id="statusBar">✓ Reconciled — all money is assigned</div>
+  </div>
 
-  <nav class="tabs" id="viewTabs">
-    <button class="nav-tab active" data-view="dashboard">Dashboard</button>
-    <button class="nav-tab" data-view="envelopes">Envelopes</button>
-    <button class="nav-tab" data-view="reports">Reports</button>
-    <button class="nav-tab" data-view="planner">Planner</button>
-  </nav>
+  <!-- ── Envelopes ── -->
+  <div class="section-label">Envelopes</div>
+  <div class="envelopes-list" id="envelopesList"></div>
 
-  <section class="view active" id="view-dashboard">
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="metric-label">Funded Envelopes</div>
-        <div class="metric-value" id="fundedCount">0</div>
-        <div class="metric-note">Categories with positive balances today</div>
-      </div>
-      <div class="stat-card">
-        <div class="metric-label">Underfunded</div>
-        <div class="metric-value" id="underfundedCount">0</div>
-        <div class="metric-note">Categories below their monthly target</div>
-      </div>
-      <div class="stat-card">
-        <div class="metric-label">Spent This Month</div>
-        <div class="metric-value" id="spentThisMonth">$0.00</div>
-        <div class="metric-note">Outflows recorded this calendar month</div>
-      </div>
-      <div class="stat-card">
-        <div class="metric-label">Added This Month</div>
-        <div class="metric-value" id="addedThisMonth">$0.00</div>
-        <div class="metric-note">Funding activity recorded this month</div>
-      </div>
-    </div>
+  <!-- ── Fill All ── -->
+  <button class="btn-fill-all" id="btnFillAll">
+    Fill All Envelopes → Weekly Amount
+  </button>
 
-    <div class="report-grid">
-      <div class="report-card">
-        <div class="panel-heading">
-          <div>
-            <div class="eyebrow">Upcoming</div>
-            <h3>Due soon</h3>
-          </div>
-          <button class="btn-inline" data-jump-view="planner">Open planner</button>
-        </div>
-        <p class="card-subcopy">A quick look at envelopes with due dates coming up and how ready they are.</p>
-        <div class="stack" id="upcomingList"></div>
-      </div>
+  <!-- ── Add ── -->
+  <button class="btn-add" id="btnAdd">
+    <span class="btn-add-icon">+</span> Add Envelope
+  </button>
 
-      <div class="report-card">
-        <div class="panel-heading">
-          <div>
-            <div class="eyebrow">Recent Activity</div>
-            <h3>Latest transactions</h3>
-          </div>
-          <button class="btn-inline" data-jump-view="envelopes">Manage envelopes</button>
-        </div>
-        <p class="card-subcopy">This combines fills and spending so you can tell what changed most recently.</p>
-        <div class="stack" id="recentActivityList"></div>
-      </div>
-    </div>
-  </section>
+  <p class="footer-note">Made by Justin · v1.7</p>
 
-  <section class="view" id="view-envelopes">
-    <div class="section-heading">
-      <div>
-        <div class="eyebrow">Category Manager</div>
-        <h2>Envelopes</h2>
-        <p>Edit names, targets, due dates, and transactions without losing the simple envelope workflow you already had.</p>
-      </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn-secondary" id="btnJumpReports">See reports</button>
-        <button class="btn-primary" id="btnJumpPlanner">Funding plan</button>
-      </div>
-    </div>
-
-    <div class="envelopes-list" id="envelopesList"></div>
-
-    <button class="btn-fill-all" id="btnFillAll">Fill all envelopes with one weekly contribution</button>
-    <button class="btn-add" id="btnAdd"><span class="btn-add-icon">+</span>Add Envelope</button>
-  </section>
-
-  <section class="view" id="view-reports">
-    <div class="section-heading">
-      <div>
-        <div class="eyebrow">Reporting</div>
-        <h2>Budget reports</h2>
-        <p>See which categories are funded, where spending is concentrated, and which monthly targets are still lagging.</p>
-      </div>
-      <button class="btn-primary" data-jump-view="dashboard">Back to dashboard</button>
-    </div>
-
-    <div class="report-grid">
-      <div class="report-card">
-        <div class="eyebrow">Funding Progress</div>
-        <h3>Envelope coverage</h3>
-        <p class="card-subcopy">How current balances compare to each envelope's monthly target.</p>
-        <div class="stack" id="coverageList"></div>
-      </div>
-
-      <div class="report-card">
-        <div class="eyebrow">Spending Report</div>
-        <h3>Largest outflows</h3>
-        <p class="card-subcopy">Categories with the biggest recorded spending this month.</p>
-        <div class="stack" id="spendingList"></div>
-      </div>
-
-      <div class="report-card">
-        <div class="eyebrow">Sources</div>
-        <h3>Payment source breakdown</h3>
-        <p class="card-subcopy">Useful if you want to split categories by checking, savings, cash, or card payoff buckets.</p>
-        <div class="stack" id="sourceList"></div>
-      </div>
-
-      <div class="report-card">
-        <div class="eyebrow">Snapshot</div>
-        <h3>Budget health summary</h3>
-        <p class="card-subcopy">A plain-language read on your budget shape, without digging through each envelope card.</p>
-        <div class="stack" id="healthList"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="view" id="view-planner">
-    <div class="section-heading">
-      <div>
-        <div class="eyebrow">Planning</div>
-        <h2>Funding planner</h2>
-        <p>Use this page to decide what to fund next, what is due soon, and where extra money should go first.</p>
-      </div>
-      <button class="btn-primary" data-jump-view="envelopes">Edit categories</button>
-    </div>
-
-    <div class="planner-grid">
-      <div class="report-card">
-        <div class="eyebrow">Next Actions</div>
-        <h3>Suggested funding order</h3>
-        <p class="card-subcopy">Sorted by urgency so you can move extra money where it helps most.</p>
-        <div class="stack" id="planList"></div>
-      </div>
-
-      <div class="report-card">
-        <div class="eyebrow">Monthly Plan</div>
-        <h3>Target overview</h3>
-        <p class="card-subcopy">How much your recurring envelope plan asks for each month and what remains to be set aside.</p>
-        <div class="stack" id="targetList"></div>
-      </div>
-    </div>
-  </section>
-
-  <p class="footer-note">Made by Justin | upgraded budget dashboard</p>
 </main>
 
 <script>
+  // ── Helpers ─────────────────────────────────────────────────────────────
   function fmt(n) {
-    const s = Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return (n < 0 ? "-$" : "$") + s;
+    const s = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (n < 0 ? '-$' : '$') + s;
   }
-
   function fmtAbs(n) {
-    return "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-
   function fmtDisplay(n) {
-    return Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-
   function parseMoney(s) {
-    const n = parseFloat(String(s).replace(/[$,\s]/g, ""));
-    return Number.isNaN(n) ? 0 : n;
+    const n = parseFloat(String(s).replace(/[$,\s]/g, ''));
+    return isNaN(n) ? 0 : n;
   }
-
   function esc(s) {
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/"/g, "&quot;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
-
-  function isoDate(offset = 0) {
+  function today() {
     const d = new Date();
-    d.setDate(d.getDate() + offset);
     const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
-
-  function today() {
-    return isoDate(0);
-  }
-
   function daysAgo(n) {
-    return isoDate(-n);
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
-
   function fmtDate(d) {
-    if (!d) return "";
-    const [y, m, day] = d.split("-");
+    if (!d) return '';
+    const [y, m, day] = d.split('-');
     return `${m}/${day}/${y.slice(2)}`;
   }
-
   function computeBalance(env) {
-    return (env.transactions || []).reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+    return (env.transactions || []).reduce((s, t) => s + t.amount, 0);
   }
 
-  function monthlyEquivalent(env) {
-    const monthly = Number(env.monthly || 0);
-    if (!monthly) return 0;
-    switch (env.frequency) {
-      case "weekly":
-        return monthly * 4;
-      case "biweekly":
-        return monthly * 2;
-      case "yearly":
-        return monthly / 12;
-      default:
-        return monthly;
-    }
-  }
-
-  function weeklyContribution(env) {
-    const monthly = monthlyEquivalent(env);
-    return monthly / 4;
-  }
-
-  function daysUntilDue(day) {
-    const todayDate = new Date();
-    const year = todayDate.getFullYear();
-    const month = todayDate.getMonth();
-    const lastDayThisMonth = new Date(year, month + 1, 0).getDate();
-    const safeDay = Math.min(Math.max(day || 1, 1), lastDayThisMonth);
-    const due = new Date(year, month, safeDay);
-    if (due < todayDate) {
-      const nextMonth = month + 1;
-      const nextYear = nextMonth > 11 ? year + 1 : year;
-      const wrappedMonth = nextMonth % 12;
-      const lastDayNextMonth = new Date(nextYear, wrappedMonth + 1, 0).getDate();
-      due.setFullYear(nextYear, wrappedMonth, Math.min(day || 1, lastDayNextMonth));
-    }
-    return Math.ceil((due - todayDate) / 86400000);
-  }
-
+  // ── Defaults ─────────────────────────────────────────────────────────────
   function makeDefaults() {
     return {
-      bankBalance: 1035.5,
-      nextId: 6,
-      nextTxId: 16,
+      bankBalance: 1035.50,
+      nextId: 4,
+      nextTxId: 10,
       envelopes: [
         {
-          id: 1, name: "Rent", monthly: 1200, dueDay: 1,
-          frequency: "monthly", source: "Checking",
+          id: 1, name: 'Rent', monthly: 1200, dueDay: 1,
+          frequency: 'monthly', source: 'Checking',
           transactions: [
-            { id: 1, date: daysAgo(14), amount: 300, note: "Weekly fill" },
-            { id: 2, date: daysAgo(7), amount: 300, note: "Weekly fill" },
-            { id: 3, date: today(), amount: 300, note: "Weekly fill" }
-          ]
+            { id: 1, date: daysAgo(14), amount: 300,  note: 'Weekly fill' },
+            { id: 2, date: daysAgo(7),  amount: 300,  note: 'Weekly fill' },
+            { id: 3, date: today(),     amount: 300,  note: 'Weekly fill' },
+          ],
         },
         {
-          id: 2, name: "Groceries", monthly: 400, dueDay: 15,
-          frequency: "monthly", source: "Checking",
+          id: 2, name: 'Groceries', monthly: 400, dueDay: 15,
+          frequency: 'monthly', source: 'Checking',
           transactions: [
-            { id: 4, date: daysAgo(14), amount: 100, note: "Weekly fill" },
-            { id: 5, date: daysAgo(10), amount: -87.32, note: "Grocery run" },
-            { id: 6, date: daysAgo(3), amount: 100, note: "Weekly fill" }
-          ]
+            { id: 4, date: daysAgo(14), amount: 100,   note: 'Weekly fill' },
+            { id: 5, date: daysAgo(10), amount: -87.32, note: 'Grocery run' },
+            { id: 6, date: daysAgo(3),  amount: 100,   note: 'Weekly fill' },
+          ],
         },
         {
-          id: 3, name: "Gas", monthly: 150, dueDay: 15,
-          frequency: "monthly", source: "Checking",
+          id: 3, name: 'Gas', monthly: 150, dueDay: 15,
+          frequency: 'monthly', source: 'Checking',
           transactions: [
-            { id: 7, date: daysAgo(14), amount: 37.5, note: "Weekly fill" },
-            { id: 8, date: daysAgo(8), amount: -52.18, note: "Fill up" },
-            { id: 9, date: today(), amount: 37.5, note: "Weekly fill" }
-          ]
+            { id: 7, date: daysAgo(14), amount: 37.50,  note: 'Weekly fill' },
+            { id: 8, date: daysAgo(8),  amount: -52.18, note: 'Fill up' },
+            { id: 9, date: today(),     amount: 37.50,  note: 'Weekly fill' },
+          ],
         },
-        {
-          id: 4, name: "Utilities", monthly: 220, dueDay: 12,
-          frequency: "monthly", source: "Checking",
-          transactions: [
-            { id: 10, date: daysAgo(11), amount: 55, note: "Weekly fill" },
-            { id: 11, date: daysAgo(2), amount: 55, note: "Weekly fill" }
-          ]
-        },
-        {
-          id: 5, name: "Emergency Fund", monthly: 250, dueDay: 28,
-          frequency: "monthly", source: "Savings",
-          transactions: [
-            { id: 12, date: daysAgo(18), amount: 125, note: "Initial transfer" },
-            { id: 13, date: daysAgo(5), amount: 62.5, note: "Weekly fill" },
-            { id: 14, date: daysAgo(1), amount: 62.5, note: "Weekly fill" },
-            { id: 15, date: today(), amount: 25, note: "Round-up transfer" }
-          ]
-        }
-      ]
+      ],
     };
   }
 
+  // ── Migration ─────────────────────────────────────────────────────────────
   function migrateState(s) {
     if (!s.nextTxId) s.nextTxId = 100;
-    if (!s.nextId) s.nextId = (s.envelopes || []).length + 1;
-    s.envelopes = Array.isArray(s.envelopes) ? s.envelopes : [];
     s.envelopes.forEach(env => {
-      if (!env.transactions) env.transactions = [];
-      if (!env.frequency) env.frequency = "monthly";
-      if (env.source === undefined) env.source = "";
-      if (!env.dueDay) env.dueDay = 1;
-      if (!env.name) env.name = "";
-      if (env.monthly === undefined) env.monthly = 0;
+      if (!env.transactions) {
+        env.transactions = [];
+        delete env.balance;
+      }
+      if (!env.frequency) env.frequency = 'monthly';
+      if (env.source === undefined) env.source = '';
     });
     return s;
   }
 
+  // ── State ─────────────────────────────────────────────────────────────────
   let state = loadState();
-  let currentView = "dashboard";
-  let expandedCardIds = new Set();
-  let expandedTxIds = new Set();
+  let expandedCardIds = new Set();   // cards with details visible
+  let expandedTxIds   = new Set();   // cards with transaction panel open
 
   function loadState() {
     try {
-      const raw = localStorage.getItem("envelopeBudget_v1");
+      const raw = localStorage.getItem('envelopeBudget_v1');
       if (raw) return migrateState(JSON.parse(raw));
     } catch (_) {}
     return makeDefaults();
   }
 
   function save() {
-    localStorage.setItem("envelopeBudget_v1", JSON.stringify(state));
+    localStorage.setItem('envelopeBudget_v1', JSON.stringify(state));
   }
 
-  function collectStats() {
-    const envelopes = state.envelopes.map(env => {
-      const balance = computeBalance(env);
-      const target = monthlyEquivalent(env);
-      const dueIn = daysUntilDue(env.dueDay);
-      const spentThisMonth = (env.transactions || [])
-        .filter(tx => isCurrentMonth(tx.date) && Number(tx.amount) < 0)
-        .reduce((sum, tx) => sum + Math.abs(Number(tx.amount || 0)), 0);
-      const addedThisMonth = (env.transactions || [])
-        .filter(tx => isCurrentMonth(tx.date) && Number(tx.amount) > 0)
-        .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
-      return { ...env, balance, target, dueIn, spentThisMonth, addedThisMonth };
-    });
-
-    const totalAssigned = envelopes.reduce((sum, env) => sum + env.balance, 0);
-    const totalTarget = envelopes.reduce((sum, env) => sum + env.target, 0);
-    const totalTransactions = envelopes.reduce((sum, env) => sum + env.transactions.length, 0);
-    const diff = state.bankBalance - totalAssigned;
-    const funded = envelopes.filter(env => env.balance > 0).length;
-    const underfunded = envelopes.filter(env => env.balance < env.target).length;
-    const spentThisMonth = envelopes.reduce((sum, env) => sum + env.spentThisMonth, 0);
-    const addedThisMonth = envelopes.reduce((sum, env) => sum + env.addedThisMonth, 0);
-    const upcoming = envelopes
-      .filter(env => env.dueIn <= 7)
-      .sort((a, b) => a.dueIn - b.dueIn);
-    const recentTransactions = envelopes
-      .flatMap(env => env.transactions.map(tx => ({ ...tx, envName: env.name || "Untitled envelope" })))
-      .sort((a, b) => (a.date < b.date ? 1 : -1));
-
-    return {
-      envelopes,
-      totalAssigned,
-      totalTarget,
-      totalTransactions,
-      diff,
-      funded,
-      underfunded,
-      spentThisMonth,
-      addedThisMonth,
-      upcoming,
-      recentTransactions
-    };
-  }
-
-  function isCurrentMonth(dateString) {
-    if (!dateString) return false;
-    const d = new Date(dateString + "T00:00:00");
-    const now = new Date();
-    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-  }
-
-  function switchView(view) {
-    currentView = view;
-    document.querySelectorAll(".nav-tab").forEach(tab => {
-      tab.classList.toggle("active", tab.dataset.view === view);
-    });
-    document.querySelectorAll(".view").forEach(panel => {
-      panel.classList.toggle("active", panel.id === `view-${view}`);
-    });
-  }
-
-  function setHTML(id, html) {
-    document.getElementById(id).innerHTML = html;
-  }
-
+  // ── Summary ───────────────────────────────────────────────────────────────
   function updateSummary() {
-    const stats = collectStats();
-    const diffEl = document.getElementById("difference");
-    const statusEl = document.getElementById("statusBar");
-    const diffNote = document.getElementById("differenceNote");
+    const bank  = state.bankBalance;
+    const total = state.envelopes.reduce((s, e) => s + computeBalance(e), 0);
+    const diff  = bank - total;
 
-    document.getElementById("totalEnvelopes").textContent = fmt(stats.totalAssigned);
-    document.getElementById("monthlyTarget").textContent = fmt(stats.totalTarget);
-    document.getElementById("transactionCount").textContent = String(stats.totalTransactions);
-    document.getElementById("fundedCount").textContent = String(stats.funded);
-    document.getElementById("underfundedCount").textContent = String(stats.underfunded);
-    document.getElementById("spentThisMonth").textContent = fmt(stats.spentThisMonth);
-    document.getElementById("addedThisMonth").textContent = fmt(stats.addedThisMonth);
+    document.getElementById('totalEnvelopes').textContent = fmt(total);
 
-    document.getElementById("heroAssigned").textContent = fmt(stats.totalAssigned);
-    document.getElementById("heroUnassigned").textContent = fmt(stats.diff);
-    document.getElementById("heroNeeded").textContent = fmt(stats.upcoming.reduce((sum, env) => sum + Math.max(env.target - env.balance, 0), 0));
+    const diffEl   = document.getElementById('difference');
+    const statusEl = document.getElementById('statusBar');
 
-    document.getElementById("heroAssignedNote").textContent = `${stats.envelopes.length} envelopes in the plan`;
-    document.getElementById("heroUnassignedNote").textContent = stats.diff >= 0 ? "Available to assign next" : "More assigned than the bank balance";
-    document.getElementById("heroNeededNote").textContent = stats.upcoming.length ? `${stats.upcoming.length} due soon categories` : "Nothing urgent in the next week";
-
-    if (Math.abs(stats.diff) < 0.005) {
-      diffEl.textContent = "$0.00";
-      diffEl.style.color = "var(--green)";
-      statusEl.className = "status-bar reconciled";
-      statusEl.textContent = "Reconciled. All money is assigned.";
-      diffNote.textContent = "Your bank balance and envelope totals match";
-      document.getElementById("heroChip").textContent = "Balanced plan";
-    } else if (stats.diff > 0) {
-      diffEl.textContent = fmtAbs(stats.diff);
-      diffEl.style.color = "var(--orange)";
-      statusEl.className = "status-bar surplus";
-      statusEl.textContent = `${fmtAbs(stats.diff)} is still sitting in the bank and can be assigned.`;
-      diffNote.textContent = "Unassigned money available";
-      document.getElementById("heroChip").textContent = "Cash ready to assign";
+    if (Math.abs(diff) < 0.005) {
+      diffEl.textContent = '$0.00';
+      diffEl.style.color = 'var(--green)';
+      statusEl.className = 'status-bar reconciled';
+      statusEl.textContent = '✓ Reconciled — all money is assigned';
+    } else if (diff > 0) {
+      diffEl.textContent = fmtAbs(diff);
+      diffEl.style.color = 'var(--orange)';
+      statusEl.className = 'status-bar surplus';
+      statusEl.textContent = `↑ ${fmtAbs(diff)} in bank not yet assigned to an envelope`;
     } else {
-      diffEl.textContent = fmtAbs(stats.diff);
-      diffEl.style.color = "var(--red)";
-      statusEl.className = "status-bar deficit";
-      statusEl.textContent = `Envelopes exceed the bank balance by ${fmtAbs(stats.diff)}.`;
-      diffNote.textContent = "Assigned money is ahead of cash on hand";
-      document.getElementById("heroChip").textContent = "Needs attention";
-    }
-
-    updateDashboard(stats);
-    updateReports(stats);
-    updatePlanner(stats);
-  }
-
-  function updateDashboard(stats) {
-    const trouble = stats.envelopes
-      .filter(env => env.balance < env.target || env.balance < 0)
-      .sort((a, b) => (a.balance - a.target) - (b.balance - b.target))
-      .slice(0, 3);
-
-    let focusBadge = "Monitoring";
-    let focusText = "Your dashboard is watching for low categories, upcoming due dates, and extra money that can be assigned next.";
-
-    if (stats.diff < 0) {
-      focusBadge = "Needs attention";
-      focusText = "You have more assigned inside envelopes than your current bank balance. Pull back a category or update the bank total.";
-    } else if (stats.diff > 0) {
-      focusBadge = "Money available";
-      focusText = "There is money waiting in the bank. The planner page can help you decide where to send it first.";
-    } else if (stats.upcoming.length) {
-      focusBadge = "Due soon";
-      focusText = "You are reconciled, so the main job now is making sure the next few due dates stay comfortably funded.";
-    }
-
-    document.getElementById("focusBadge").textContent = focusBadge;
-    document.getElementById("focusText").textContent = focusText;
-
-    document.getElementById("heroHeadline").textContent = stats.diff < 0
-      ? "Bring your budget back in line before the next spending wave."
-      : stats.diff > 0
-        ? "You have money ready to direct into higher-priority categories."
-        : "Your plan is balanced. Keep an eye on what is due next.";
-
-    document.getElementById("heroCopy").textContent = stats.upcoming.length
-      ? `There ${stats.upcoming.length === 1 ? "is" : "are"} ${stats.upcoming.length} envelope${stats.upcoming.length === 1 ? "" : "s"} due within the next week, so this is a good time to review upcoming bills and sinking funds.`
-      : "Nothing urgent is due this week, so this is a great moment to strengthen savings, refill categories, or tidy up spending records.";
-
-    if (!trouble.length) {
-      setHTML("focusList", `<div class="empty-state">Nothing urgent right now. Your categories are in a comfortable place.</div>`);
-    } else {
-      setHTML("focusList", trouble.map(env => {
-        const gap = Math.max(env.target - env.balance, 0);
-        const badgeClass = env.balance < 0 ? "danger" : gap > 0 ? "warn" : "good";
-        const badgeText = env.balance < 0 ? "Negative balance" : gap > 0 ? "Needs funding" : "On track";
-        return `
-          <div class="timeline-item">
-            <div class="timeline-main">
-              <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-              <div class="item-meta">Due in ${env.dueIn} day${env.dueIn === 1 ? "" : "s"} | Target ${fmt(env.target)}</div>
-            </div>
-            <div style="text-align:right;">
-              <div class="item-value ${env.balance < 0 ? "neg" : "warn"}">${fmt(env.balance)}</div>
-              <div class="badge ${badgeClass}" style="margin-top:8px;">${badgeText}</div>
-            </div>
-          </div>
-        `;
-      }).join(""));
-    }
-
-    if (!stats.upcoming.length) {
-      setHTML("upcomingList", `<div class="empty-state">No envelopes are due within the next 7 days.</div>`);
-    } else {
-      setHTML("upcomingList", stats.upcoming.slice(0, 5).map(env => {
-        const remaining = Math.max(env.target - env.balance, 0);
-        const pct = env.target > 0 ? Math.max(0, Math.min((env.balance / env.target) * 100, 100)) : 0;
-        const fillClass = env.balance < 0 ? "danger" : pct < 60 ? "warn" : "";
-        return `
-          <div class="upcoming-item">
-            <div class="upcoming-main">
-              <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-              <div class="item-meta">Due in ${env.dueIn} day${env.dueIn === 1 ? "" : "s"} | Need ${fmt(remaining)} more to hit target</div>
-              <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%;"></div></div>
-            </div>
-            <div class="item-value ${remaining > 0 ? "warn" : "pos"}">${fmt(env.balance)}</div>
-          </div>
-        `;
-      }).join(""));
-    }
-
-    if (!stats.recentTransactions.length) {
-      setHTML("recentActivityList", `<div class="empty-state">No transactions yet. Add one from any envelope card.</div>`);
-    } else {
-      setHTML("recentActivityList", stats.recentTransactions.slice(0, 6).map(tx => `
-        <div class="timeline-item">
-          <div class="timeline-main">
-            <div class="item-title">${esc(tx.envName)}</div>
-            <div class="item-meta">${fmtDate(tx.date)} | ${esc(tx.note || "No note")}</div>
-          </div>
-          <div class="item-value ${Number(tx.amount) >= 0 ? "pos" : "neg"}">${fmt(Number(tx.amount))}</div>
-        </div>
-      `).join(""));
+      diffEl.textContent = fmtAbs(diff);
+      diffEl.style.color = 'var(--red)';
+      statusEl.className = 'status-bar deficit';
+      statusEl.textContent = `↓ Envelopes exceed bank balance by ${fmtAbs(diff)}`;
     }
   }
 
-  function updateReports(stats) {
-    const coverage = [...stats.envelopes]
-      .sort((a, b) => (b.target ? b.balance / b.target : 0) - (a.target ? a.balance / a.target : 0));
-
-    setHTML("coverageList", coverage.length ? coverage.map(env => {
-      const pct = env.target > 0 ? Math.max(0, Math.min((env.balance / env.target) * 100, 100)) : 0;
-      const gap = Math.max(env.target - env.balance, 0);
-      const fillClass = env.balance < 0 ? "danger" : pct < 60 ? "warn" : "";
-      return `
-        <div class="progress-row">
-          <div class="progress-main">
-            <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-            <div class="item-meta">${fmt(env.balance)} of ${fmt(env.target)} funded</div>
-            <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%;"></div></div>
-          </div>
-          <div class="item-value ${gap > 0 ? "warn" : "pos"}">${gap > 0 ? fmt(gap) : "Ready"}</div>
-        </div>
-      `;
-    }).join("") : `<div class="empty-state">Add envelopes to start seeing funding coverage.</div>`);
-
-    const spending = [...stats.envelopes]
-      .filter(env => env.spentThisMonth > 0)
-      .sort((a, b) => b.spentThisMonth - a.spentThisMonth);
-
-    setHTML("spendingList", spending.length ? spending.map(env => `
-      <div class="timeline-item">
-        <div class="timeline-main">
-          <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-          <div class="item-meta">Current balance ${fmt(env.balance)}</div>
-        </div>
-        <div class="item-value neg">-${fmtDisplay(env.spentThisMonth)}</div>
-      </div>
-    `).join("") : `<div class="empty-state">No spending has been recorded this month yet.</div>`);
-
-    const sources = {};
-    stats.envelopes.forEach(env => {
-      const key = env.source && env.source.trim() ? env.source.trim() : "Unassigned source";
-      if (!sources[key]) {
-        sources[key] = { count: 0, balance: 0, target: 0 };
-      }
-      sources[key].count += 1;
-      sources[key].balance += env.balance;
-      sources[key].target += env.target;
-    });
-
-    const sourceRows = Object.entries(sources).sort((a, b) => b[1].balance - a[1].balance);
-    setHTML("sourceList", sourceRows.length ? sourceRows.map(([name, info]) => `
-      <div class="source-row">
-        <div>
-          <div class="item-title">${esc(name)}</div>
-          <div class="item-meta">${info.count} envelope${info.count === 1 ? "" : "s"} | Monthly target ${fmt(info.target)}</div>
-        </div>
-        <div class="item-value">${fmt(info.balance)}</div>
-      </div>
-    `).join("") : `<div class="empty-state">No payment sources set yet.</div>`);
-
-    const healthItems = [
-      {
-        title: "Budget alignment",
-        meta: Math.abs(stats.diff) < 0.005 ? "Envelope totals match the bank balance." : stats.diff > 0 ? "There is unassigned money in the bank." : "Assigned money exceeds cash on hand.",
-        value: Math.abs(stats.diff) < 0.005 ? "Balanced" : fmt(stats.diff),
-        cls: Math.abs(stats.diff) < 0.005 ? "pos" : stats.diff > 0 ? "warn" : "neg"
-      },
-      {
-        title: "Most funded category",
-        meta: stats.envelopes.length ? (stats.envelopes.slice().sort((a, b) => b.balance - a.balance)[0].name || "Untitled envelope") : "No categories yet",
-        value: stats.envelopes.length ? fmt(stats.envelopes.slice().sort((a, b) => b.balance - a.balance)[0].balance) : "$0.00",
-        cls: "pos"
-      },
-      {
-        title: "Monthly target load",
-        meta: `${stats.underfunded} envelope${stats.underfunded === 1 ? "" : "s"} still below target`,
-        value: fmt(stats.totalTarget),
-        cls: "warn"
-      }
-    ];
-
-    setHTML("healthList", healthItems.map(item => `
-      <div class="timeline-item">
-        <div class="timeline-main">
-          <div class="item-title">${esc(item.title)}</div>
-          <div class="item-meta">${esc(item.meta)}</div>
-        </div>
-        <div class="item-value ${item.cls}">${esc(item.value)}</div>
-      </div>
-    `).join(""));
-  }
-
-  function updatePlanner(stats) {
-    const plan = [...stats.envelopes]
-      .map(env => ({
-        ...env,
-        needed: Math.max(env.target - env.balance, 0),
-        urgency: Math.max(0, 10 - env.dueIn) + (env.balance < 0 ? 10 : 0)
-      }))
-      .sort((a, b) => (b.urgency + b.needed / 100) - (a.urgency + a.needed / 100));
-
-    setHTML("planList", plan.length ? plan.slice(0, 6).map(env => `
-      <div class="plan-row">
-        <div>
-          <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-          <div class="item-meta">Due in ${env.dueIn} day${env.dueIn === 1 ? "" : "s"} | Suggested weekly fill ${fmt(weeklyContribution(env))}</div>
-        </div>
-        <div class="item-value ${env.needed > 0 ? "warn" : "pos"}">${env.needed > 0 ? fmt(env.needed) : "On track"}</div>
-      </div>
-    `).join("") : `<div class="empty-state">Add envelopes to build a funding plan.</div>`);
-
-    setHTML("targetList", plan.length ? plan.slice().sort((a, b) => b.target - a.target).map(env => `
-      <div class="plan-row">
-        <div>
-          <div class="item-title">${esc(env.name || "Untitled envelope")}</div>
-          <div class="item-meta">${esc(env.frequency || "monthly")} target | Source ${esc(env.source || "Not set")}</div>
-        </div>
-        <div style="text-align:right;">
-          <div class="item-value">${fmt(env.target)}</div>
-          <div class="item-meta">${env.needed > 0 ? `${fmt(env.needed)} still to fund` : "Fully funded or ahead"}</div>
-        </div>
-      </div>
-    `).join("") : `<div class="empty-state">No targets to show yet.</div>`);
-  }
-
+  // ── Render Envelopes ──────────────────────────────────────────────────────
   function renderEnvelopes() {
-    const listEl = document.getElementById("envelopesList");
-    listEl.innerHTML = "";
+    const listEl = document.getElementById('envelopesList');
+    listEl.innerHTML = '';
 
     state.envelopes.forEach(env => {
-      const bal = computeBalance(env);
+      const bal        = computeBalance(env);
       const isCardOpen = expandedCardIds.has(env.id);
-      const isTxOpen = expandedTxIds.has(env.id);
-      const txCount = env.transactions.length;
+      const isTxOpen   = expandedTxIds.has(env.id);
+      const txCount    = env.transactions.length;
 
-      const card = document.createElement("div");
-      card.className = "env-card" + (isCardOpen ? " card-open" : "") + (isTxOpen ? " tx-open" : "");
+      const card = document.createElement('div');
+      card.className = 'env-card' + (isCardOpen ? ' card-open' : '') + (isTxOpen ? ' tx-open' : '');
       card.dataset.id = env.id;
 
-      let bodyHTML = "";
+      // Build expandable body only when card is open
+      let bodyHTML = '';
       if (isCardOpen) {
         const txRows = txCount === 0
           ? `<div class="tx-empty">No transactions yet.</div>`
-          : [...env.transactions].reverse().map(tx => {
-            const cls = tx.amount >= 0 ? "pos" : "neg";
-            const sign = tx.amount >= 0 ? "+" : "";
-            return `
-              <div class="tx-item">
-                <input type="date" class="tx-edit tx-edit-date" data-env-id="${env.id}" data-tx-id="${tx.id}" value="${tx.date}">
-                <input type="text" class="tx-edit tx-edit-note" data-env-id="${env.id}" data-tx-id="${tx.id}" value="${esc(tx.note || "")}" placeholder="Note">
-                <input type="text" class="tx-edit tx-edit-amt ${cls}" data-env-id="${env.id}" data-tx-id="${tx.id}" value="${sign}${fmtDisplay(Math.abs(tx.amount))}" data-raw="${tx.amount}">
-                <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${tx.id}" aria-label="Delete">x</button>
-              </div>
-            `;
-          }).join("");
+          : [...env.transactions].reverse().map(t => {
+              const cls  = t.amount >= 0 ? 'pos' : 'neg';
+              const sign = t.amount >= 0 ? '+' : '';
+              return `
+                <div class="tx-item">
+                  <input type="date" class="tx-edit tx-edit-date"
+                    data-env-id="${env.id}" data-tx-id="${t.id}" value="${t.date}">
+                  <input type="text" class="tx-edit tx-edit-note"
+                    data-env-id="${env.id}" data-tx-id="${t.id}"
+                    value="${esc(t.note || '')}" placeholder="Note">
+                  <input type="text" class="tx-edit tx-edit-amt ${cls}"
+                    data-env-id="${env.id}" data-tx-id="${t.id}"
+                    value="${sign}${fmtDisplay(Math.abs(t.amount))}"
+                    data-raw="${t.amount}">
+                  <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${t.id}" aria-label="Delete">×</button>
+                </div>`;
+            }).join('');
 
         bodyHTML = `
           <div class="env-body">
             <div class="env-fields">
               <div class="env-field">
                 <label>Budget</label>
-                <input type="text" inputmode="decimal" value="${fmtDisplay(env.monthly)}" data-field="monthly" data-id="${env.id}" data-raw="${env.monthly}">
+                <input type="text" inputmode="decimal"
+                  value="${fmtDisplay(env.monthly)}"
+                  data-field="monthly" data-id="${env.id}" data-raw="${env.monthly}">
               </div>
               <div class="env-field">
                 <label>Due Date</label>
-                <input type="number" inputmode="numeric" min="1" max="31" value="${env.dueDay}" data-field="dueDay" data-id="${env.id}">
+                <input type="number" inputmode="numeric" min="1" max="31"
+                  value="${env.dueDay}" data-field="dueDay" data-id="${env.id}">
               </div>
               <div class="env-field">
                 <label>Balance</label>
-                <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1" style="color:${bal < 0 ? "var(--red)" : "var(--green)"}">
+                <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1"
+                  style="color:${bal < 0 ? 'var(--red)' : 'var(--green)'}">
               </div>
             </div>
             <div class="env-fields-2">
               <div class="env-field">
                 <label>Frequency</label>
                 <select data-field="frequency" data-id="${env.id}">
-                  <option value="weekly" ${env.frequency === "weekly" ? "selected" : ""}>Weekly</option>
-                  <option value="biweekly" ${env.frequency === "biweekly" ? "selected" : ""}>Bi-Weekly</option>
-                  <option value="monthly" ${env.frequency === "monthly" ? "selected" : ""}>Monthly</option>
-                  <option value="yearly" ${env.frequency === "yearly" ? "selected" : ""}>Yearly</option>
+                  <option value="weekly"   ${env.frequency==='weekly'   ?'selected':''}>Weekly</option>
+                  <option value="biweekly" ${env.frequency==='biweekly' ?'selected':''}>Bi-Weekly</option>
+                  <option value="monthly"  ${env.frequency==='monthly'  ?'selected':''}>Monthly</option>
+                  <option value="yearly"   ${env.frequency==='yearly'   ?'selected':''}>Yearly</option>
                 </select>
               </div>
               <div class="env-field">
                 <label>Payment Source</label>
-                <input type="text" placeholder="e.g. Checking" value="${esc(env.source)}" data-field="source" data-id="${env.id}">
+                <input type="text" placeholder="e.g. Checking"
+                  value="${esc(env.source)}" data-field="source" data-id="${env.id}">
               </div>
             </div>
           </div>
 
           <button class="btn-tx-toggle" data-id="${env.id}">
-            Transactions${txCount > 0 ? ` (${txCount})` : ""}
-            <span class="tx-chevron">></span>
+            Transactions${txCount > 0 ? ` (${txCount})` : ''}
+            <span class="tx-chevron">›</span>
           </button>
 
           <div class="tx-panel">
@@ -1779,9 +835,11 @@
             <div class="tx-form">
               <div class="tx-form-row">
                 <input type="date" class="tx-date-input" data-id="${env.id}" value="${today()}">
-                <input type="text" class="tx-amt-input" data-id="${env.id}" placeholder="Amount (+300 or -50)">
+                <input type="text" class="tx-amt-input" data-id="${env.id}"
+                  placeholder="Amount (+300 or -50)">
               </div>
-              <input type="text" class="tx-note-input" data-id="${env.id}" placeholder="Note (optional)">
+              <input type="text" class="tx-note-input" data-id="${env.id}"
+                placeholder="Note (optional)">
               <button class="btn-add-tx" data-id="${env.id}">Add Transaction</button>
             </div>
           </div>
@@ -1791,12 +849,13 @@
       card.innerHTML = `
         <div class="env-top-wrap">
           <div class="env-top">
-            <input class="env-name" type="text" placeholder="Envelope name" value="${esc(env.name)}" data-field="name" data-id="${env.id}">
+            <input class="env-name" type="text" placeholder="Envelope name"
+              value="${esc(env.name)}" data-field="name" data-id="${env.id}">
             <button class="btn-toggle-card" data-id="${env.id}" aria-label="Toggle details">
-              <span class="env-bal-pill${bal < 0 ? " negative" : ""}">${fmt(bal)}</span>
-              <span class="card-chevron">></span>
+              <span class="env-bal-pill${bal < 0 ? ' negative' : ''}">${fmt(bal)}</span>
+              <span class="card-chevron">›</span>
             </button>
-            <button class="btn-del" data-id="${env.id}" aria-label="Delete">x</button>
+            <button class="btn-del" data-id="${env.id}" aria-label="Delete">×</button>
           </div>
         </div>
         ${bodyHTML}
@@ -1806,205 +865,218 @@
     });
   }
 
-  const listEl = document.getElementById("envelopesList");
-  const bankInput = document.getElementById("bankBalance");
+  // ── Envelope Event Delegation ─────────────────────────────────────────────
+  const listEl = document.getElementById('envelopesList');
 
-  listEl.addEventListener("focusin", e => {
-    const inp = e.target.closest("input[data-field]");
+  // Focus: strip formatting for money inputs
+  listEl.addEventListener('focusin', e => {
+    const inp = e.target.closest('input[data-field]');
     if (inp) {
       const field = inp.dataset.field;
-      if (field === "monthly") {
-        inp.value = inp.dataset.raw === "0" ? "" : inp.dataset.raw;
+      if (field === 'monthly') {
+        inp.value = inp.dataset.raw === '0' ? '' : inp.dataset.raw;
         inp.select();
-      } else if (field === "dueDay") {
+      } else if (field === 'dueDay') {
         inp.select();
       }
       return;
     }
-
-    const amt = e.target.closest(".tx-edit-amt");
+    // Transaction amount: show raw number on focus
+    const amt = e.target.closest('.tx-edit-amt');
     if (amt) {
       amt.value = amt.dataset.raw;
       amt.select();
     }
   });
 
-  listEl.addEventListener("focusout", e => {
-    const inp = e.target.closest("input[data-field]");
+  // Blur: reformat money inputs + save transaction edits
+  listEl.addEventListener('focusout', e => {
+    // Envelope field blur
+    const inp = e.target.closest('input[data-field]');
     if (inp) {
-      const id = parseInt(inp.dataset.id, 10);
-      const env = state.envelopes.find(item => item.id === id);
+      const id  = parseInt(inp.dataset.id);
+      const env = state.envelopes.find(x => x.id === id);
       if (!env) return;
-      if (inp.dataset.field === "monthly") {
+      const field = inp.dataset.field;
+      if (field === 'monthly') {
         const val = parseMoney(inp.value);
         env.monthly = val;
         inp.value = fmtDisplay(val);
         inp.dataset.raw = val;
         save();
-        updateSummary();
       }
       return;
     }
 
-    const txInp = e.target.closest(".tx-edit");
+    // Transaction field blur
+    const txInp = e.target.closest('.tx-edit');
     if (!txInp) return;
-    const envId = parseInt(txInp.dataset.envId, 10);
-    const txId = parseInt(txInp.dataset.txId, 10);
-    const env = state.envelopes.find(item => item.id === envId);
+    const envId = parseInt(txInp.dataset.envId);
+    const txId  = parseInt(txInp.dataset.txId);
+    const env   = state.envelopes.find(x => x.id === envId);
     if (!env) return;
-    const tx = env.transactions.find(item => item.id === txId);
+    const tx = env.transactions.find(t => t.id === txId);
     if (!tx) return;
 
-    if (txInp.classList.contains("tx-edit-date")) {
+    if (txInp.classList.contains('tx-edit-date')) {
       tx.date = txInp.value || today();
-    } else if (txInp.classList.contains("tx-edit-note")) {
+      renderEnvelopes();
+      save();
+    } else if (txInp.classList.contains('tx-edit-note')) {
       tx.note = txInp.value.trim();
-    } else if (txInp.classList.contains("tx-edit-amt")) {
+      save();
+    } else if (txInp.classList.contains('tx-edit-amt')) {
       const val = parseMoney(txInp.value);
       tx.amount = val;
       txInp.dataset.raw = val;
+      renderEnvelopes();
+      updateSummary();
+      save();
     }
+  });
+
+  // Input: live updates
+  listEl.addEventListener('input', e => {
+    const inp = e.target.closest('input[data-field], select[data-field]');
+    if (!inp) return;
+    const id  = parseInt(inp.dataset.id);
+    const env = state.envelopes.find(x => x.id === id);
+    if (!env) return;
+    const field = inp.dataset.field;
+
+    if (field === 'name') {
+      env.name = inp.value;
+      save();
+    } else if (field === 'monthly') {
+      const val = parseMoney(inp.value);
+      env.monthly = val;
+      inp.dataset.raw = val;
+    } else if (field === 'dueDay') {
+      let val = parseInt(inp.value);
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > 31) val = 31;
+      env.dueDay = val;
+      save();
+    } else if (field === 'frequency') {
+      env.frequency = inp.value;
+      save();
+    } else if (field === 'source') {
+      env.source = inp.value;
+      save();
+    }
+  });
+
+  // Toggle card details
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-toggle-card');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    if (expandedCardIds.has(id)) {
+      expandedCardIds.delete(id);
+      expandedTxIds.delete(id);   // also close transactions
+    } else {
+      expandedCardIds.add(id);
+    }
+    renderEnvelopes();
+  });
+
+  // Delete envelope
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-del');
+    if (!btn) return;
+    const id  = parseInt(btn.dataset.id);
+    const env = state.envelopes.find(x => x.id === id);
+    if (!confirm(`Delete "${env?.name || 'this envelope'}"? This cannot be undone.`)) return;
+    state.envelopes = state.envelopes.filter(x => x.id !== id);
+    expandedCardIds.delete(id);
+    expandedTxIds.delete(id);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // Toggle transaction panel
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-tx-toggle');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    if (expandedTxIds.has(id)) expandedTxIds.delete(id);
+    else expandedTxIds.add(id);
+    renderEnvelopes();
+  });
+
+  // Delete transaction
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-del-tx');
+    if (!btn) return;
+    const envId = parseInt(btn.dataset.envId);
+    const txId  = parseInt(btn.dataset.txId);
+    const env   = state.envelopes.find(x => x.id === envId);
+    if (!env) return;
+    if (!confirm('Delete this transaction? This cannot be undone.')) return;
+    env.transactions = env.transactions.filter(t => t.id !== txId);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // Add transaction
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-add-tx');
+    if (!btn) return;
+    const id   = parseInt(btn.dataset.id);
+    const env  = state.envelopes.find(x => x.id === id);
+    if (!env) return;
+
+    const card     = btn.closest('.env-card');
+    const dateInp  = card.querySelector('.tx-date-input');
+    const amtInp   = card.querySelector('.tx-amt-input');
+    const noteInp  = card.querySelector('.tx-note-input');
+
+    const amount = parseMoney(amtInp.value);
+    if (amount === 0) { amtInp.focus(); return; }
+
+    env.transactions.push({
+      id:     state.nextTxId++,
+      date:   dateInp.value || today(),
+      amount: amount,
+      note:   noteInp.value.trim() || '',
+    });
+
+    amtInp.value  = '';
+    noteInp.value = '';
 
     renderEnvelopes();
     updateSummary();
     save();
   });
 
-  listEl.addEventListener("input", e => {
-    const inp = e.target.closest("input[data-field], select[data-field]");
-    if (!inp) return;
-    const id = parseInt(inp.dataset.id, 10);
-    const env = state.envelopes.find(item => item.id === id);
-    if (!env) return;
-    const field = inp.dataset.field;
+  // ── Bank Balance ──────────────────────────────────────────────────────────
+  const bankInput = document.getElementById('bankBalance');
 
-    if (field === "name") {
-      env.name = inp.value;
-    } else if (field === "monthly") {
-      env.monthly = parseMoney(inp.value);
-      inp.dataset.raw = env.monthly;
-    } else if (field === "dueDay") {
-      let value = parseInt(inp.value, 10);
-      if (Number.isNaN(value) || value < 1) value = 1;
-      if (value > 31) value = 31;
-      env.dueDay = value;
-    } else if (field === "frequency") {
-      env.frequency = inp.value;
-    } else if (field === "source") {
-      env.source = inp.value;
-    }
-
-    save();
-    updateSummary();
-  });
-
-  listEl.addEventListener("click", e => {
-    const toggleBtn = e.target.closest(".btn-toggle-card");
-    if (toggleBtn) {
-      const id = parseInt(toggleBtn.dataset.id, 10);
-      if (expandedCardIds.has(id)) {
-        expandedCardIds.delete(id);
-        expandedTxIds.delete(id);
-      } else {
-        expandedCardIds.add(id);
-      }
-      renderEnvelopes();
-      return;
-    }
-
-    const deleteBtn = e.target.closest(".btn-del");
-    if (deleteBtn) {
-      const id = parseInt(deleteBtn.dataset.id, 10);
-      const env = state.envelopes.find(item => item.id === id);
-      if (!confirm(`Delete "${env?.name || "this envelope"}"? This cannot be undone.`)) return;
-      state.envelopes = state.envelopes.filter(item => item.id !== id);
-      expandedCardIds.delete(id);
-      expandedTxIds.delete(id);
-      renderEnvelopes();
-      updateSummary();
-      save();
-      return;
-    }
-
-    const txToggle = e.target.closest(".btn-tx-toggle");
-    if (txToggle) {
-      const id = parseInt(txToggle.dataset.id, 10);
-      if (expandedTxIds.has(id)) expandedTxIds.delete(id);
-      else expandedTxIds.add(id);
-      renderEnvelopes();
-      return;
-    }
-
-    const deleteTxBtn = e.target.closest(".btn-del-tx");
-    if (deleteTxBtn) {
-      const envId = parseInt(deleteTxBtn.dataset.envId, 10);
-      const txId = parseInt(deleteTxBtn.dataset.txId, 10);
-      const env = state.envelopes.find(item => item.id === envId);
-      if (!env) return;
-      if (!confirm("Delete this transaction? This cannot be undone.")) return;
-      env.transactions = env.transactions.filter(item => item.id !== txId);
-      renderEnvelopes();
-      updateSummary();
-      save();
-      return;
-    }
-
-    const addTxBtn = e.target.closest(".btn-add-tx");
-    if (addTxBtn) {
-      const id = parseInt(addTxBtn.dataset.id, 10);
-      const env = state.envelopes.find(item => item.id === id);
-      if (!env) return;
-
-      const card = addTxBtn.closest(".env-card");
-      const dateInp = card.querySelector(".tx-date-input");
-      const amtInp = card.querySelector(".tx-amt-input");
-      const noteInp = card.querySelector(".tx-note-input");
-      const amount = parseMoney(amtInp.value);
-
-      if (amount === 0) {
-        amtInp.focus();
-        return;
-      }
-
-      env.transactions.push({
-        id: state.nextTxId++,
-        date: dateInp.value || today(),
-        amount,
-        note: noteInp.value.trim() || ""
-      });
-
-      amtInp.value = "";
-      noteInp.value = "";
-      renderEnvelopes();
-      updateSummary();
-      save();
-    }
-  });
-
-  bankInput.addEventListener("focus", () => {
-    bankInput.value = state.bankBalance === 0 ? "" : String(state.bankBalance);
+  bankInput.addEventListener('focus', () => {
+    bankInput.value = state.bankBalance === 0 ? '' : String(state.bankBalance);
     bankInput.select();
   });
-
-  bankInput.addEventListener("input", () => {
+  bankInput.addEventListener('input', () => {
     state.bankBalance = parseMoney(bankInput.value);
     updateSummary();
   });
-
-  bankInput.addEventListener("blur", () => {
+  bankInput.addEventListener('blur', () => {
     bankInput.value = fmtDisplay(state.bankBalance);
     save();
   });
 
-  document.getElementById("btnFillAll").addEventListener("click", () => {
-    if (!confirm("Add a weekly fill transaction to all envelopes?")) return;
-    const date = today();
+  // ── Fill All ──────────────────────────────────────────────────────────────
+  document.getElementById('btnFillAll').addEventListener('click', () => {
+    if (!confirm('Add a weekly fill transaction to all envelopes?')) return;
+    const d = today();
     state.envelopes.forEach(env => {
       env.transactions.push({
-        id: state.nextTxId++,
-        date,
-        amount: weeklyContribution(env),
-        note: "Weekly fill"
+        id:     state.nextTxId++,
+        date:   d,
+        amount: env.monthly / 4,
+        note:   'Weekly fill',
       });
     });
     renderEnvelopes();
@@ -2012,57 +1084,59 @@
     save();
   });
 
-  document.getElementById("btnAdd").addEventListener("click", () => {
+  // ── Add Envelope ──────────────────────────────────────────────────────────
+  document.getElementById('btnAdd').addEventListener('click', () => {
     const newEnv = {
-      id: state.nextId++,
-      name: "",
-      monthly: 0,
-      dueDay: 1,
-      frequency: "monthly",
-      source: "",
-      transactions: []
+      id:           state.nextId++,
+      name:         '',
+      monthly:      0,
+      dueDay:       1,
+      frequency:    'monthly',
+      source:       '',
+      transactions: [],
     };
-
     state.envelopes.push(newEnv);
-    expandedCardIds.add(newEnv.id);
-    switchView("envelopes");
+    expandedCardIds.add(newEnv.id);   // open new card automatically
     renderEnvelopes();
     updateSummary();
     save();
 
-    const cards = document.querySelectorAll(".env-card");
+    const cards = document.querySelectorAll('.env-card');
     if (cards.length) {
       const last = cards[cards.length - 1];
-      const nameField = last.querySelector(".env-name");
+      const nameField = last.querySelector('.env-name');
       if (nameField) {
-        last.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setTimeout(() => nameField.focus(), 120);
       }
     }
   });
 
-  document.getElementById("btnCollapseAll").addEventListener("click", () => {
+  // ── Collapse All ──────────────────────────────────────────────────────────
+  document.getElementById('btnCollapseAll').addEventListener('click', () => {
     expandedCardIds.clear();
     expandedTxIds.clear();
     renderEnvelopes();
   });
 
-  document.getElementById("btnExport").addEventListener("click", () => {
+  // ── Export ────────────────────────────────────────────────────────────────
+  document.getElementById('btnExport').addEventListener('click', () => {
     const json = JSON.stringify(state, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "envelope-budget.json";
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'envelope-budget.json';
     a.click();
     URL.revokeObjectURL(url);
   });
 
-  document.getElementById("btnImport").addEventListener("click", () => {
-    document.getElementById("fileImport").click();
+  // ── Import ────────────────────────────────────────────────────────────────
+  document.getElementById('btnImport').addEventListener('click', () => {
+    document.getElementById('fileImport').click();
   });
 
-  document.getElementById("fileImport").addEventListener("change", e => {
+  document.getElementById('fileImport').addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -2070,7 +1144,7 @@
       try {
         const imported = JSON.parse(ev.target.result);
         if (!imported.envelopes || !Array.isArray(imported.envelopes)) {
-          alert("Invalid file. Please choose an Envelope Budget export.");
+          alert('Invalid file — make sure you select an Envelope Budget export.');
           return;
         }
         state = migrateState(imported);
@@ -2081,15 +1155,16 @@
         updateSummary();
         save();
       } catch (err) {
-        alert("Could not read file: " + err.message);
+        alert('Could not read file: ' + err.message);
       }
     };
     reader.readAsText(file);
-    e.target.value = "";
+    e.target.value = '';
   });
 
-  document.getElementById("btnReset").addEventListener("click", () => {
-    if (!confirm("Reset everything back to the example envelopes? This cannot be undone.")) return;
+  // ── Reset ─────────────────────────────────────────────────────────────────
+  document.getElementById('btnReset').addEventListener('click', () => {
+    if (!confirm('Reset everything back to the example envelopes? This cannot be undone.')) return;
     state = makeDefaults();
     expandedCardIds.clear();
     expandedTxIds.clear();
@@ -2099,23 +1174,8 @@
     save();
   });
 
-  document.getElementById("btnJumpReports").addEventListener("click", () => switchView("reports"));
-  document.getElementById("btnJumpPlanner").addEventListener("click", () => switchView("planner"));
-
-  document.getElementById("viewTabs").addEventListener("click", e => {
-    const tab = e.target.closest(".nav-tab");
-    if (!tab) return;
-    switchView(tab.dataset.view);
-  });
-
-  document.addEventListener("click", e => {
-    const jump = e.target.closest("[data-jump-view]");
-    if (!jump) return;
-    switchView(jump.dataset.jumpView);
-  });
-
+  // ── Init ──────────────────────────────────────────────────────────────────
   bankInput.value = fmtDisplay(state.bankBalance);
-  switchView(currentView);
   renderEnvelopes();
   updateSummary();
 </script>
