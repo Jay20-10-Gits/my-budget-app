@@ -228,6 +228,7 @@
       font-weight: 700;
       color: var(--green);
     }
+    .env-bal-pill.negative { color: var(--red); }
 
     .card-chevron {
       font-size: 13px;
@@ -431,6 +432,24 @@
     .tx-amount.pos { color: var(--green); }
     .tx-amount.neg { color: var(--red); }
 
+    /* Editable transaction inputs */
+    .tx-edit {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      color: var(--label);
+      width: 100%;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background 0.12s;
+      font-family: inherit;
+    }
+    .tx-edit:focus { background: var(--fill-focus); }
+    .tx-edit-amt       { text-align: right; font-weight: 600; }
+    .tx-edit-amt.pos   { color: var(--green); }
+    .tx-edit-amt.neg   { color: var(--red); }
+
     /* Add transaction form */
     .tx-form {
       padding: 12px 16px;
@@ -585,7 +604,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.6</p>
+  <p class="footer-note">Made by Justin · v1.7</p>
 
 </main>
 
@@ -755,9 +774,15 @@
               const sign = t.amount >= 0 ? '+' : '';
               return `
                 <div class="tx-item">
-                  <span class="tx-date">${fmtDate(t.date)}</span>
-                  <span class="tx-note">${esc(t.note || '—')}</span>
-                  <span class="tx-amount ${cls}">${sign}${fmt(t.amount)}</span>
+                  <input type="date" class="tx-edit tx-edit-date"
+                    data-env-id="${env.id}" data-tx-id="${t.id}" value="${t.date}">
+                  <input type="text" class="tx-edit tx-edit-note"
+                    data-env-id="${env.id}" data-tx-id="${t.id}"
+                    value="${esc(t.note || '')}" placeholder="Note">
+                  <input type="text" class="tx-edit tx-edit-amt ${cls}"
+                    data-env-id="${env.id}" data-tx-id="${t.id}"
+                    value="${sign}${fmtDisplay(Math.abs(t.amount))}"
+                    data-raw="${t.amount}">
                   <button class="btn-del-tx" data-env-id="${env.id}" data-tx-id="${t.id}" aria-label="Delete">×</button>
                 </div>`;
             }).join('');
@@ -778,7 +803,8 @@
               </div>
               <div class="env-field">
                 <label>Balance</label>
-                <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1">
+                <input type="text" value="${fmtDisplay(bal)}" readonly tabindex="-1"
+                  style="color:${bal < 0 ? 'var(--red)' : 'var(--green)'}">
               </div>
             </div>
             <div class="env-fields-2">
@@ -826,7 +852,7 @@
             <input class="env-name" type="text" placeholder="Envelope name"
               value="${esc(env.name)}" data-field="name" data-id="${env.id}">
             <button class="btn-toggle-card" data-id="${env.id}" aria-label="Toggle details">
-              <span class="env-bal-pill">${fmt(bal)}</span>
+              <span class="env-bal-pill${bal < 0 ? ' negative' : ''}">${fmt(bal)}</span>
               <span class="card-chevron">›</span>
             </button>
             <button class="btn-del" data-id="${env.id}" aria-label="Delete">×</button>
@@ -845,29 +871,66 @@
   // Focus: strip formatting for money inputs
   listEl.addEventListener('focusin', e => {
     const inp = e.target.closest('input[data-field]');
-    if (!inp) return;
-    const field = inp.dataset.field;
-    if (field === 'monthly') {
-      inp.value = inp.dataset.raw === '0' ? '' : inp.dataset.raw;
-      inp.select();
-    } else if (field === 'dueDay') {
-      inp.select();
+    if (inp) {
+      const field = inp.dataset.field;
+      if (field === 'monthly') {
+        inp.value = inp.dataset.raw === '0' ? '' : inp.dataset.raw;
+        inp.select();
+      } else if (field === 'dueDay') {
+        inp.select();
+      }
+      return;
+    }
+    // Transaction amount: show raw number on focus
+    const amt = e.target.closest('.tx-edit-amt');
+    if (amt) {
+      amt.value = amt.dataset.raw;
+      amt.select();
     }
   });
 
-  // Blur: reformat money inputs
+  // Blur: reformat money inputs + save transaction edits
   listEl.addEventListener('focusout', e => {
+    // Envelope field blur
     const inp = e.target.closest('input[data-field]');
-    if (!inp) return;
-    const id  = parseInt(inp.dataset.id);
-    const env = state.envelopes.find(x => x.id === id);
+    if (inp) {
+      const id  = parseInt(inp.dataset.id);
+      const env = state.envelopes.find(x => x.id === id);
+      if (!env) return;
+      const field = inp.dataset.field;
+      if (field === 'monthly') {
+        const val = parseMoney(inp.value);
+        env.monthly = val;
+        inp.value = fmtDisplay(val);
+        inp.dataset.raw = val;
+        save();
+      }
+      return;
+    }
+
+    // Transaction field blur
+    const txInp = e.target.closest('.tx-edit');
+    if (!txInp) return;
+    const envId = parseInt(txInp.dataset.envId);
+    const txId  = parseInt(txInp.dataset.txId);
+    const env   = state.envelopes.find(x => x.id === envId);
     if (!env) return;
-    const field = inp.dataset.field;
-    if (field === 'monthly') {
-      const val = parseMoney(inp.value);
-      env.monthly = val;
-      inp.value = fmtDisplay(val);
-      inp.dataset.raw = val;
+    const tx = env.transactions.find(t => t.id === txId);
+    if (!tx) return;
+
+    if (txInp.classList.contains('tx-edit-date')) {
+      tx.date = txInp.value || today();
+      renderEnvelopes();
+      save();
+    } else if (txInp.classList.contains('tx-edit-note')) {
+      tx.note = txInp.value.trim();
+      save();
+    } else if (txInp.classList.contains('tx-edit-amt')) {
+      const val = parseMoney(txInp.value);
+      tx.amount = val;
+      txInp.dataset.raw = val;
+      renderEnvelopes();
+      updateSummary();
       save();
     }
   });
