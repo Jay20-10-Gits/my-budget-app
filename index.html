@@ -384,8 +384,8 @@
 
     .tx-item {
       display: grid;
-      grid-template-columns: 90px 1fr auto auto;
-      gap: 8px;
+      grid-template-columns: 82px 1fr 72px 26px;
+      gap: 6px;
       padding: 10px 16px;
       border-bottom: 1px solid var(--sep);
       align-items: center;
@@ -440,6 +440,7 @@
       font-size: 13px;
       color: var(--label);
       width: 100%;
+      min-width: 0;
       padding: 2px 4px;
       border-radius: 4px;
       transition: background 0.12s;
@@ -547,6 +548,111 @@
       margin-top: 4px;
     }
 
+    /* ─── Transfer / Modal ───────────────────────────── */
+    .btn-hdr-transfer { color: var(--accent); }
+    .btn-hdr-transfer:hover { background: var(--fill-focus); }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--r);
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      overflow: hidden;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--sep);
+    }
+    .modal-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .modal-field label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--label2);
+    }
+    .modal-field input,
+    .modal-field select {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--label);
+      background: var(--fill);
+      border: none;
+      outline: none;
+      border-radius: var(--r-sm);
+      padding: 9px 11px;
+      width: 100%;
+      font-family: inherit;
+      transition: background 0.12s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .modal-field input:focus,
+    .modal-field select:focus { background: var(--fill-focus); }
+    .modal-field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238e8e93'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      padding-right: 26px;
+    }
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 4px 20px 18px;
+    }
+    .btn-modal-cancel {
+      background: var(--fill);
+      color: var(--label2);
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 11px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.14s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-modal-confirm {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 11px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.14s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-modal-cancel:hover,
+    .btn-modal-confirm:hover { opacity: 0.85; }
+
     /* ─── Responsive ─────────────────────────────────── */
     @media (min-width: 480px) {
       .env-fields   { gap: 10px; }
@@ -560,9 +666,10 @@
 <header>
   <h1>Envelope Budget</h1>
   <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse All</button>
+  <button class="btn-hdr btn-hdr-transfer" id="btnTransfer">⇄ Transfer</button>
   <button class="btn-hdr btn-hdr-export" id="btnExport">↑ Export</button>
   <button class="btn-hdr btn-hdr-import" id="btnImport">↓ Import</button>
-  <input type="file" id="fileImport" accept=".json" style="display:none">
+  <input type="file" id="fileImport" accept=".csv" style="display:none">
   <button class="btn-hdr btn-hdr-reset" id="btnReset">Reset</button>
 </header>
 
@@ -604,9 +711,42 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.7</p>
+  <p class="footer-note">Made by Justin · v1.8</p>
 
 </main>
+
+<!-- ── Transfer Modal ── -->
+<div id="transferModal" class="modal-overlay" style="display:none" aria-modal="true" role="dialog">
+  <div class="modal-card">
+    <div class="modal-title">⇄ Transfer Between Envelopes</div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label>From</label>
+        <select id="transferFrom"></select>
+      </div>
+      <div class="modal-field">
+        <label>To</label>
+        <select id="transferTo"></select>
+      </div>
+      <div class="modal-field">
+        <label>Amount</label>
+        <input type="text" id="transferAmt" placeholder="e.g. 50.00" autocomplete="off">
+      </div>
+      <div class="modal-field">
+        <label>Date</label>
+        <input type="date" id="transferDate">
+      </div>
+      <div class="modal-field">
+        <label>Note</label>
+        <input type="text" id="transferNote" placeholder="Transfer" autocomplete="off">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="btnTransferCancel">Cancel</button>
+      <button class="btn-modal-confirm" id="btnTransferConfirm">Transfer</button>
+    </div>
+  </div>
+</div>
 
 <script>
   // ── Helpers ─────────────────────────────────────────────────────────────
@@ -831,7 +971,6 @@
           </button>
 
           <div class="tx-panel">
-            <div class="tx-list">${txRows}</div>
             <div class="tx-form">
               <div class="tx-form-row">
                 <input type="date" class="tx-date-input" data-id="${env.id}" value="${today()}">
@@ -842,6 +981,7 @@
                 placeholder="Note (optional)">
               <button class="btn-add-tx" data-id="${env.id}">Add Transaction</button>
             </div>
+            <div class="tx-list">${txRows}</div>
           </div>
         `;
       }
@@ -1119,14 +1259,133 @@
     renderEnvelopes();
   });
 
+  // ── CSV helpers ───────────────────────────────────────────────────────────
+  function csvCell(v) {
+    const s = String(v == null ? '' : v);
+    if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+  function csvRow(...cells) { return cells.map(csvCell).join(','); }
+
+  function buildCSV(s) {
+    const rows = [];
+    rows.push(csvRow('BANK_BALANCE', s.bankBalance.toFixed(2)));
+    rows.push(csvRow('Envelope','Budget','DueDay','Frequency','Source','TxDate','TxAmount','TxNote'));
+    s.envelopes.forEach(env => {
+      if (env.transactions.length === 0) {
+        rows.push(csvRow(env.name, env.monthly.toFixed(2), env.dueDay, env.frequency, env.source, '', '', ''));
+      } else {
+        env.transactions.forEach(t => {
+          rows.push(csvRow(env.name, env.monthly.toFixed(2), env.dueDay, env.frequency, env.source, t.date, t.amount.toFixed(2), t.note || ''));
+        });
+      }
+    });
+    return rows.join('\n');
+  }
+
+  // Normalize any date string to YYYY-MM-DD for <input type="date">
+  function toISODate(str) {
+    if (!str) return '';
+    str = str.trim();
+    // Already YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+    // Excel US: M/D/YYYY or MM/DD/YYYY
+    let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    // Excel short year: M/D/YY
+    m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (m) {
+      const yr = parseInt(m[3]) < 50 ? 2000 + parseInt(m[3]) : 1900 + parseInt(m[3]);
+      return `${yr}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    }
+    // Excel European: D.M.YYYY or D-M-YYYY
+    m = str.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})$/);
+    if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    return str; // pass through unknown formats
+  }
+
+  function parseCSV(text) {
+    // Strip UTF-8 BOM that Excel sometimes adds
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    // Minimal CSV parser that handles quoted fields
+    function parseLine(line) {
+      const cells = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQ) {
+          if (ch === '"' && line[i+1] === '"') { cur += '"'; i++; }
+          else if (ch === '"') { inQ = false; }
+          else { cur += ch; }
+        } else {
+          if (ch === '"') { inQ = true; }
+          else if (ch === ',') { cells.push(cur); cur = ''; }
+          else { cur += ch; }
+        }
+      }
+      cells.push(cur);
+      return cells;
+    }
+
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (lines.length < 2) throw new Error('File appears empty or invalid.');
+
+    // First line: BANK_BALANCE
+    const firstCells = parseLine(lines[0]);
+    if (firstCells[0] !== 'BANK_BALANCE') throw new Error('Missing BANK_BALANCE row.');
+    const bankBalance = parseFloat(firstCells[1]) || 0;
+
+    // Second line: header — skip
+    // Data rows start at index 2
+    const envelopeMap = new Map(); // name → envelope object (preserves order)
+    let nextId   = 1;
+    let nextTxId = 1;
+
+    for (let i = 2; i < lines.length; i++) {
+      const c = parseLine(lines[i]);
+      const [envName, budget, dueDay, frequency, source, txDate, txAmount, txNote] = c;
+      if (!envName) continue;
+
+      if (!envelopeMap.has(envName)) {
+        envelopeMap.set(envName, {
+          id:           nextId++,
+          name:         envName,
+          monthly:      parseFloat(budget) || 0,
+          dueDay:       parseInt(dueDay) || 1,
+          frequency:    frequency || 'monthly',
+          source:       source || '',
+          transactions: [],
+        });
+      }
+      const env = envelopeMap.get(envName);
+      if (txDate && txAmount !== '') {
+        env.transactions.push({
+          id:     nextTxId++,
+          date:   toISODate(txDate),
+          amount: parseFloat(txAmount) || 0,
+          note:   txNote || '',
+        });
+      }
+    }
+
+    return {
+      bankBalance,
+      nextId,
+      nextTxId,
+      envelopes: [...envelopeMap.values()],
+    };
+  }
+
   // ── Export ────────────────────────────────────────────────────────────────
   document.getElementById('btnExport').addEventListener('click', () => {
-    const json = JSON.stringify(state, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const csv  = buildCSV(state);
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href     = url;
-    a.download = 'envelope-budget.json';
+    a.download = 'envelope-budget.csv';
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -1142,11 +1401,7 @@
     const reader = new FileReader();
     reader.onload = ev => {
       try {
-        const imported = JSON.parse(ev.target.result);
-        if (!imported.envelopes || !Array.isArray(imported.envelopes)) {
-          alert('Invalid file — make sure you select an Envelope Budget export.');
-          return;
-        }
+        const imported = parseCSV(ev.target.result);
         state = migrateState(imported);
         expandedCardIds.clear();
         expandedTxIds.clear();
@@ -1169,6 +1424,71 @@
     expandedCardIds.clear();
     expandedTxIds.clear();
     bankInput.value = fmtDisplay(state.bankBalance);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // ── Transfer Modal ────────────────────────────────────────────────────────
+  const transferModal  = document.getElementById('transferModal');
+  const transferFromEl = document.getElementById('transferFrom');
+  const transferToEl   = document.getElementById('transferTo');
+  const transferAmtEl  = document.getElementById('transferAmt');
+  const transferDateEl = document.getElementById('transferDate');
+  const transferNoteEl = document.getElementById('transferNote');
+
+  function openTransferModal() {
+    if (state.envelopes.length < 2) {
+      alert('You need at least 2 envelopes to transfer between them.');
+      return;
+    }
+    // Populate dropdowns
+    const opts = state.envelopes.map(e =>
+      `<option value="${e.id}">${esc(e.name) || '(unnamed)'}</option>`
+    ).join('');
+    transferFromEl.innerHTML = opts;
+    transferToEl.innerHTML   = opts;
+    // Default To to second envelope so From ≠ To
+    if (transferToEl.options.length > 1) transferToEl.selectedIndex = 1;
+    // Reset inputs
+    transferAmtEl.value  = '';
+    transferNoteEl.value = '';
+    transferDateEl.value = today();
+    transferModal.style.display = 'flex';
+    transferAmtEl.focus();
+  }
+
+  function closeTransferModal() {
+    transferModal.style.display = 'none';
+  }
+
+  document.getElementById('btnTransfer').addEventListener('click', openTransferModal);
+  document.getElementById('btnTransferCancel').addEventListener('click', closeTransferModal);
+
+  // Close on backdrop click
+  transferModal.addEventListener('click', e => {
+    if (e.target === transferModal) closeTransferModal();
+  });
+
+  document.getElementById('btnTransferConfirm').addEventListener('click', () => {
+    const fromId = parseInt(transferFromEl.value);
+    const toId   = parseInt(transferToEl.value);
+    if (fromId === toId) { alert('Please choose different envelopes for From and To.'); return; }
+
+    const amount = parseMoney(transferAmtEl.value);
+    if (amount <= 0) { alert('Please enter a positive amount to transfer.'); transferAmtEl.focus(); return; }
+
+    const fromEnv = state.envelopes.find(e => e.id === fromId);
+    const toEnv   = state.envelopes.find(e => e.id === toId);
+    if (!fromEnv || !toEnv) return;
+
+    const date = transferDateEl.value || today();
+    const note = transferNoteEl.value.trim() || 'Transfer';
+
+    fromEnv.transactions.push({ id: state.nextTxId++, date, amount: -amount, note: `${note} → ${toEnv.name}` });
+    toEnv.transactions.push({   id: state.nextTxId++, date, amount:  amount, note: `${note} ← ${fromEnv.name}` });
+
+    closeTransferModal();
     renderEnvelopes();
     updateSummary();
     save();
