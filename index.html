@@ -7,6 +7,12 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+
     :root {
       --bg:         #f2f2f7;
       --surface:    #ffffff;
@@ -43,6 +49,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     header h1 {
@@ -182,6 +191,7 @@
       border-radius: var(--r);
       box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
       overflow: hidden;
+      max-width: 100%;
     }
 
     /* Top row wrapper — always visible */
@@ -389,6 +399,8 @@
       padding: 10px 16px;
       border-bottom: 1px solid var(--sep);
       align-items: center;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .btn-del-tx {
@@ -711,7 +723,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.8</p>
+  <p class="footer-note">Made by Justin · v1.9</p>
 
 </main>
 
