@@ -715,7 +715,7 @@
 
   <!-- ── Fill All ── -->
   <button class="btn-fill-all" id="btnFillAll">
-    Fill All Envelopes → Weekly Amount
+    Fill All Envelopes → Weekly
   </button>
 
   <!-- ── Add ── -->
@@ -723,7 +723,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.9</p>
+  <p class="footer-note">Made by Justin · v1.10</p>
 
 </main>
 
@@ -849,7 +849,7 @@
         env.transactions = [];
         delete env.balance;
       }
-      if (!env.frequency) env.frequency = 'monthly';
+      if (!env.frequency || env.frequency === 'biweekly') env.frequency = 'monthly';
       if (env.source === undefined) env.source = '';
     });
     return s;
@@ -963,10 +963,9 @@
               <div class="env-field">
                 <label>Frequency</label>
                 <select data-field="frequency" data-id="${env.id}">
-                  <option value="weekly"   ${env.frequency==='weekly'   ?'selected':''}>Weekly</option>
-                  <option value="biweekly" ${env.frequency==='biweekly' ?'selected':''}>Bi-Weekly</option>
-                  <option value="monthly"  ${env.frequency==='monthly'  ?'selected':''}>Monthly</option>
-                  <option value="yearly"   ${env.frequency==='yearly'   ?'selected':''}>Yearly</option>
+                  <option value="weekly"  ${env.frequency==='weekly'  ?'selected':''}>Weekly</option>
+                  <option value="monthly" ${env.frequency==='monthly' ?'selected':''}>Monthly</option>
+                  <option value="yearly"  ${env.frequency==='yearly'  ?'selected':''}>Yearly</option>
                 </select>
               </div>
               <div class="env-field">
@@ -1220,6 +1219,14 @@
   });
 
   // ── Fill All ──────────────────────────────────────────────────────────────
+  function weeklyFillAmount(env) {
+    switch (env.frequency) {
+      case 'weekly':  return env.monthly;        // budget IS the weekly amount
+      case 'yearly':  return env.monthly / 52;   // spread annual budget over 52 weeks
+      default:        return env.monthly / 4;    // monthly ÷ 4
+    }
+  }
+
   document.getElementById('btnFillAll').addEventListener('click', () => {
     if (!confirm('Add a weekly fill transaction to all envelopes?')) return;
     const d = today();
@@ -1227,7 +1234,7 @@
       env.transactions.push({
         id:     state.nextTxId++,
         date:   d,
-        amount: env.monthly / 4,
+        amount: weeklyFillAmount(env),
         note:   'Weekly fill',
       });
     });
