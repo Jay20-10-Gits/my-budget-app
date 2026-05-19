@@ -42,23 +42,24 @@
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--sep);
-      padding: calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 14px calc(16px + env(safe-area-inset-left));
+      padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 10px calc(16px + env(safe-area-inset-left));
       position: sticky;
       top: 0;
       z-index: 100;
       display: flex;
       align-items: center;
-      gap: 6px;
+      flex-wrap: wrap;
+      gap: 4px 5px;
       width: 100%;
       max-width: 100%;
-      overflow: hidden;
     }
 
     header h1 {
       font-size: 19px;
       font-weight: 700;
       letter-spacing: -0.4px;
-      flex: 1;
+      flex: 1 0 auto;
+      margin-right: 2px;
     }
 
     .btn-hdr {
@@ -82,8 +83,6 @@
     .btn-hdr-collapse:hover { background: var(--fill); }
     .btn-hdr-reset  { color: var(--label2); }
     .btn-hdr-reset:hover { color: var(--orange); background: rgba(255,159,10,0.09); }
-    .btn-hdr-wipe   { color: var(--label2); }
-    .btn-hdr-wipe:hover  { color: var(--red); background: rgba(255,59,48,0.07); }
 
     /* ─── Main ───────────────────────────────────────── */
     main {
@@ -697,13 +696,12 @@
 
 <header>
   <h1>Envelope Budget</h1>
-  <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse All</button>
+  <button class="btn-hdr btn-hdr-collapse" id="btnCollapseAll">Collapse</button>
   <button class="btn-hdr btn-hdr-transfer" id="btnTransfer">⇄ Transfer</button>
   <button class="btn-hdr btn-hdr-export" id="btnExport">↑ Export</button>
   <button class="btn-hdr btn-hdr-import" id="btnImport">↓ Import</button>
   <input type="file" id="fileImport" accept=".csv" style="display:none">
   <button class="btn-hdr btn-hdr-reset" id="btnReset">Demo</button>
-  <button class="btn-hdr btn-hdr-wipe"  id="btnWipe">Wipe All</button>
 </header>
 
 <main>
@@ -744,7 +742,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.11</p>
+  <p class="footer-note">Made by Justin · v1.12</p>
 
 </main>
 
@@ -1467,18 +1465,6 @@
     expandedCardIds.clear();
     expandedTxIds.clear();
     bankInput.value = fmtDisplay(state.bankBalance);
-    renderEnvelopes();
-    updateSummary();
-    save();
-  });
-
-  // ── Wipe All (blank slate) ────────────────────────────────────────────────
-  document.getElementById('btnWipe').addEventListener('click', () => {
-    if (!confirm('Wipe everything and start from scratch? This cannot be undone.')) return;
-    state = { bankBalance: 0, nextId: 1, nextTxId: 1, envelopes: [] };
-    expandedCardIds.clear();
-    expandedTxIds.clear();
-    bankInput.value = fmtDisplay(0);
     renderEnvelopes();
     updateSummary();
     save();
