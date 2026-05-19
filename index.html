@@ -81,7 +81,9 @@
     .btn-hdr-collapse { color: var(--label2); }
     .btn-hdr-collapse:hover { background: var(--fill); }
     .btn-hdr-reset  { color: var(--label2); }
-    .btn-hdr-reset:hover { color: var(--red); background: rgba(255,59,48,0.07); }
+    .btn-hdr-reset:hover { color: var(--orange); background: rgba(255,159,10,0.09); }
+    .btn-hdr-wipe   { color: var(--label2); }
+    .btn-hdr-wipe:hover  { color: var(--red); background: rgba(255,59,48,0.07); }
 
     /* ─── Main ───────────────────────────────────────── */
     main {
@@ -560,6 +562,24 @@
       margin-top: 4px;
     }
 
+    /* ─── Clear All Transactions ────────────────────── */
+    .btn-clear-txs {
+      background: none;
+      border: none;
+      border-top: 1px solid var(--sep);
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--red);
+      cursor: pointer;
+      text-align: center;
+      letter-spacing: 0.1px;
+      transition: background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-clear-txs:hover { background: rgba(255,59,48,0.07); }
+
     /* ─── Transfer / Modal ───────────────────────────── */
     .btn-hdr-transfer { color: var(--accent); }
     .btn-hdr-transfer:hover { background: var(--fill-focus); }
@@ -682,7 +702,8 @@
   <button class="btn-hdr btn-hdr-export" id="btnExport">↑ Export</button>
   <button class="btn-hdr btn-hdr-import" id="btnImport">↓ Import</button>
   <input type="file" id="fileImport" accept=".csv" style="display:none">
-  <button class="btn-hdr btn-hdr-reset" id="btnReset">Reset</button>
+  <button class="btn-hdr btn-hdr-reset" id="btnReset">Demo</button>
+  <button class="btn-hdr btn-hdr-wipe"  id="btnWipe">Wipe All</button>
 </header>
 
 <main>
@@ -723,7 +744,7 @@
     <span class="btn-add-icon">+</span> Add Envelope
   </button>
 
-  <p class="footer-note">Made by Justin · v1.10</p>
+  <p class="footer-note">Made by Justin · v1.11</p>
 
 </main>
 
@@ -993,6 +1014,7 @@
               <button class="btn-add-tx" data-id="${env.id}">Add Transaction</button>
             </div>
             <div class="tx-list">${txRows}</div>
+            ${txCount > 0 ? `<button class="btn-clear-txs" data-id="${env.id}">✕ Delete All Transactions</button>` : ''}
           </div>
         `;
       }
@@ -1220,11 +1242,13 @@
 
   // ── Fill All ──────────────────────────────────────────────────────────────
   function weeklyFillAmount(env) {
+    let amt;
     switch (env.frequency) {
-      case 'weekly':  return env.monthly;        // budget IS the weekly amount
-      case 'yearly':  return env.monthly / 52;   // spread annual budget over 52 weeks
-      default:        return env.monthly / 4;    // monthly ÷ 4
+      case 'weekly':  amt = env.monthly;        break; // budget IS the weekly amount
+      case 'yearly':  amt = env.monthly / 52;   break; // spread annual budget over 52 weeks
+      default:        amt = env.monthly / 4;    break; // monthly ÷ 4
     }
+    return Math.round(amt * 100) / 100;
   }
 
   document.getElementById('btnFillAll').addEventListener('click', () => {
@@ -1436,13 +1460,39 @@
     e.target.value = '';
   });
 
-  // ── Reset ─────────────────────────────────────────────────────────────────
+  // ── Demo Reset (loads sample data) ───────────────────────────────────────
   document.getElementById('btnReset').addEventListener('click', () => {
-    if (!confirm('Reset everything back to the example envelopes? This cannot be undone.')) return;
+    if (!confirm('Load the example envelopes? This will overwrite everything and cannot be undone.')) return;
     state = makeDefaults();
     expandedCardIds.clear();
     expandedTxIds.clear();
     bankInput.value = fmtDisplay(state.bankBalance);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // ── Wipe All (blank slate) ────────────────────────────────────────────────
+  document.getElementById('btnWipe').addEventListener('click', () => {
+    if (!confirm('Wipe everything and start from scratch? This cannot be undone.')) return;
+    state = { bankBalance: 0, nextId: 1, nextTxId: 1, envelopes: [] };
+    expandedCardIds.clear();
+    expandedTxIds.clear();
+    bankInput.value = fmtDisplay(0);
+    renderEnvelopes();
+    updateSummary();
+    save();
+  });
+
+  // ── Delete All Transactions (per envelope) ────────────────────────────────
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-clear-txs');
+    if (!btn) return;
+    const id  = parseInt(btn.dataset.id);
+    const env = state.envelopes.find(x => x.id === id);
+    if (!env) return;
+    if (!confirm(`Delete all transactions for "${env.name || 'this envelope'}"? This cannot be undone.`)) return;
+    env.transactions = [];
     renderEnvelopes();
     updateSummary();
     save();
